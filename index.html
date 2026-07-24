@@ -39,6 +39,19 @@
     font-display: swap;
   }
 
+  @font-face {
+    font-family: 'FightingGyeongnam';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607131603@gfcredspirit-black/gfcredspirit-black/GFCRedSpirit-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'FightingGyeongnam';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607131603@gfcredspirit-black/gfcredspirit-black/GFCRedSpirit-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+  }
+
   :root {
     --ink: #14110f;
     --paper: #ffffff;
@@ -58,6 +71,8 @@
     --font-latin: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --font-ko: "helvetica-neue-lt-pro", "Helvetica Neue", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
     --font-ko-first: "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    /* story popup + top greeting only */
+    --font-story: "FightingGyeongnam", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -82,7 +97,7 @@
   /* ---------- Greeting ---------- */
   .greeting {
     flex: 0 0 auto;
-    font-family: var(--font-ko);
+    font-family: var(--font-story);
     font-weight: 700;
     color: var(--ink);
     text-align: center;
@@ -299,7 +314,10 @@
       rgba(255, 250, 235, 0.6) calc(25% + 5px),
       rgba(101, 74, 33, 0) calc(25% + 5px)
     );
-    box-shadow: 0 40px 90px -30px rgba(20,17,15,0.4), inset 0 0 60px rgba(101, 74, 33, 0.18);
+    /* real paper has near-square corners, not an app-card radius */
+    border-radius: 6px;
+    outline: none;
+    box-shadow: 0 40px 90px -30px rgba(20,17,15,0.4), 0 4px 14px rgba(20,17,15,0.22), inset 0 0 60px rgba(101, 74, 33, 0.18);
   }
 
   .intro-content {
@@ -310,7 +328,7 @@
   }
 
   .intro-text {
-    font-family: var(--font-ko);
+    font-family: var(--font-story);
     color: var(--ink);
     font-weight: 500;
     line-height: 1.45;
