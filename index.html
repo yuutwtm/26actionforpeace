@@ -112,7 +112,8 @@
   }
 
   /* ---------- Greeting ---------- */
-  .greeting {
+  .greeting,
+  .closing {
     flex: 0 0 auto;
     font-family: var(--font-story);
     font-weight: 700;
@@ -122,6 +123,8 @@
     font-size: clamp(1.15rem, min(4vw, 3.4vh), 2.5rem);
     padding: clamp(0.6rem, 2.2vh, 1.2rem) 6vw 0;
   }
+  /* closing farewell above the footer - same greeting format */
+  .closing { padding-top: clamp(0.8rem, 2.6vh, 1.6rem); }
 
   /* ---------- Stage ---------- */
   .stage {
@@ -558,6 +561,8 @@
     <button class="icon-btn story-toggle" id="storyToggle" type="button" aria-label="스토리 다시 보기">🗺️</button>
     <button class="icon-btn replay" id="replay" type="button" aria-label="다시 보기 (Replay)">&#8635;</button>
   </div>
+
+  <p class="closing">지금까지 🕊️피해자 없는 피스☮️였습니다! ✌️</p>
 
   <div class="footer">
     <p class="hint" id="hint"><a href="mailto:yuutwtm@gmail.com">Site credits</a></p>
