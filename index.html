@@ -297,13 +297,46 @@
     margin-bottom: clamp(1rem, 2.6vw, 1.8rem);
   }
 
-  .p-word {
-    font-weight: 600; letter-spacing: -0.01em; line-height: 1.15;
+  /* Item description body: the write-up under the title, in Pretendard,
+     dark ink on the paper, tinted by the item's own accent color. */
+  .p-body {
+    font-family: var(--font-ko-first);
     color: var(--ink);
-    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    margin-top: clamp(1.4rem, 3.5vw, 2.4rem);
+    font-size: clamp(1rem, 2.2vw, 1.35rem);
+    line-height: 1.62;
   }
-  .p-word.latin { font-family: var(--font-latin); }
-  .p-word.ko    { font-family: var(--font-ko-first); }
+  .p-body:empty { display: none; }
+  .p-body .p-lead {
+    font-weight: 600;
+    margin-bottom: clamp(1.2rem, 3vw, 1.9rem);
+  }
+  .p-body .p-sections {
+    list-style: none;
+    counter-reset: sec;
+    display: flex; flex-direction: column;
+    gap: clamp(1.3rem, 3.2vw, 2.1rem);
+  }
+  .p-body .p-sections > li { counter-increment: sec; }
+  .p-body .p-sections > li > h3 {
+    font-family: var(--font-ko-first);
+    font-size: clamp(1.15rem, 2.7vw, 1.6rem);
+    font-weight: 800; line-height: 1.3;
+    color: var(--c);
+    margin-bottom: clamp(0.5rem, 1.4vw, 0.85rem);
+  }
+  .p-body .p-sections > li > h3::before { content: counter(sec) ". "; }
+  .p-body ul {
+    list-style: none;
+    display: flex; flex-direction: column;
+    gap: clamp(0.4rem, 1.1vw, 0.65rem);
+  }
+  .p-body ul > li { position: relative; padding-left: 1.15em; }
+  .p-body ul > li::before {
+    content: "•";
+    position: absolute; left: 0; top: 0;
+    color: var(--c); font-weight: 700;
+  }
 
   .close {
     -webkit-appearance: none; appearance: none; border: 0;
@@ -505,17 +538,17 @@
   <p class="greeting">평화의 용사🕊️님, 안녕하세요?<br>☑️이곳이 용사님🛡️의 인벤토리📂입니다…<br>이번 모험에 가져갈 아이템을 선택하세요!</p>
 
   <main class="stage" id="stage">
-    <button class="word" data-lang="hangul" data-key="hangul" style="--c: var(--mint)" aria-haspopup="dialog" aria-label="평화">
+    <button class="word" data-lang="hangul" data-key="hangul" style="--c: var(--mint)" aria-haspopup="dialog" aria-label="Our Today">
       <span class="glyphs" aria-hidden="true"></span>
       <span class="label">아이템 설명</span>
     </button>
 
-    <button class="word" data-lang="peace" data-key="peace" style="--c: var(--coral)" aria-haspopup="dialog" aria-label="Peace">
+    <button class="word" data-lang="peace" data-key="peace" style="--c: var(--coral)" aria-haspopup="dialog" aria-label="Your Actions">
       <span class="glyphs" aria-hidden="true"></span>
       <span class="label">아이템 설명</span>
     </button>
 
-    <button class="word" data-lang="hanja" data-key="hanja" style="--c: var(--lemon)" aria-haspopup="dialog" aria-label="平和">
+    <button class="word" data-lang="hanja" data-key="hanja" style="--c: var(--lemon)" aria-haspopup="dialog" aria-label="Our Actions">
       <span class="glyphs" aria-hidden="true"></span>
       <span class="label">아이템 설명</span>
     </button>
@@ -537,10 +570,10 @@
       <div class="popup-head">
         <button class="close" id="close" type="button">닫기 ✕</button>
       </div>
-      <div class="content">
+      <div class="content" id="p-content">
         <div class="kicker" id="p-kicker"></div>
         <h2 class="p-title" id="p-title"></h2>
-        <p class="p-word" id="p-word"></p>
+        <div class="p-body" id="p-body"></div>
       </div>
     </div>
   </div>
@@ -582,9 +615,75 @@
   const KICKER_TEXT = "아이템 설명";
 
   const DATA = {
-    peace:  { text: "Peace", wordClass: "latin", phrase: "our tomorrow", emoji: "☮️" },
-    hangul: { text: "평화",  wordClass: "ko",    phrase: "your actions", emoji: "🕊️" },
-    hanja:  { text: "平和",  wordClass: "ko",    phrase: "our actions", emoji: "🧭" }
+    hangul: {
+      text: "Our Today", wordClass: "ko", phrase: "Our Today", emoji: "🕊️",
+      body: `
+        <p class="p-lead">평화 분과에서는 &lsquo;평화&rsquo;라는 추상적인 개념을 아래와 같이 두 가지 차원으로 나눠 논의했어요.</p>
+        <ol class="p-sections">
+          <li>
+            <h3>국가/문화권 간 평화 달성</h3>
+            <ul>
+              <li>기존의 편견 극복하기</li>
+              <li>현상(혐오와 편견, 난민에 대한 부정적인 인식) 뒤의 본질적인 문제(경제적 불안감, 종교적 차이 등) 해결하기</li>
+            </ul>
+          </li>
+          <li>
+            <h3>우리 사회 속 평화 달성</h3>
+            <ul>
+              <li>가정 내 평화 달성(세대 갈등)</li>
+              <li>교실 내 평화 달성(장애 인식 부족, 학생 간 갈등 관리)</li>
+              <li>가상 공간 내 평화 달성(SNS상 차별, 혐오 발언)</li>
+            </ul>
+          </li>
+        </ol>`
+    },
+    peace: {
+      text: "Your Actions", wordClass: "latin", phrase: "Your Actions", emoji: "☮️",
+      body: `
+        <ol class="p-sections">
+          <li>
+            <h3>국가/문화권 간 평화 달성</h3>
+            <ul>
+              <li>국제기구 사안 및 지속가능발전목표 의제에 국가 지도자들이 협조하여 주세요.</li>
+              <li>차별을 방지하는 유효한 제도를 마련하여 주세요.</li>
+              <li>실효성 있는 다문화 교육을 실시해 주세요. 다문화를 직접 경험할 수 있었으면 좋겠습니다.</li>
+              <li>어른들도 다른 나라/난민에 대해서 단순한 편견이 아니라 수치와 구체적인 사례를 근거로 이야기해 주세요.</li>
+            </ul>
+          </li>
+          <li>
+            <h3>우리 사회 속 평화 달성</h3>
+            <ul>
+              <li>현실/SNS 속 혐오 발언에 대한 제재를 강화해 주세요.</li>
+              <li>혐오 발언을 &lsquo;표현의 자유&rsquo;로 포장하지 않도록, 명확한 기준을 마련하여 주세요.</li>
+              <li>기존의 강의식 장애인식교육을 넘어서, 장애를 가진 친구들과 경험을 통해 친해질 수 있는 기회를 마련하여 주세요.</li>
+              <li>미디어 리터러시 교육을 더욱 활성화해 주세요.</li>
+            </ul>
+          </li>
+        </ol>`
+    },
+    hanja: {
+      text: "Our Actions", wordClass: "ko", phrase: "Our Actions", emoji: "🧭",
+      body: `
+        <ol class="p-sections">
+          <li>
+            <h3>국가/문화권 간 평화 달성</h3>
+            <ul>
+              <li>세계 시민 의식을 기르겠습니다. 우리가 사는 세계의 문제라면 지구 반대편에서 일어나고 있더라도 곧 나의 문제이기도 합니다.</li>
+              <li>외국인/난민에 대한 차별과 혐오 표현을 방지하는 캠페인을 진행하겠습니다.</li>
+              <li>나와 다른 문화권의 입장에서도 생각해보는 연습을 하겠습니다.</li>
+            </ul>
+          </li>
+          <li>
+            <h3>우리 사회 속 평화 달성</h3>
+            <ul>
+              <li>나의 감정을 먼저 인식하고 다른 친구의 감정을 면밀히 살펴 갈등을 방지하고자 노력하겠습니다.</li>
+              <li>나와 신체적/정신적으로 다른 친구를 존중하고 이해하고자 노력하겠습니다.</li>
+              <li>우리 각자가 미디어 리터러시를 길러 거짓 정보를 전파하지 않겠습니다.</li>
+              <li>각자의 자리에서 평화를 위한 다양한 활동에 함께 하겠습니다.</li>
+            </ul>
+          </li>
+        </ol>`
+    }
   };
   const COLOR = { peace: "var(--coral)", hangul: "var(--mint)", hanja: "var(--lemon)" };
 
@@ -683,7 +782,8 @@
   const closeB = document.getElementById("close");
   const kicker = document.getElementById("p-kicker");
   const title  = document.getElementById("p-title");
-  const wordEl = document.getElementById("p-word");
+  const bodyEl = document.getElementById("p-body");
+  const contentEl = document.getElementById("p-content");
   let lastFocus = null;
 
   function open(key) {
@@ -691,9 +791,8 @@
     lastFocus = document.activeElement;
     kicker.textContent = KICKER_TEXT;
     title.textContent = d.phrase;
-    wordEl.textContent = d.text;
-    wordEl.insertAdjacentHTML("beforeend", `<span class="sparkle-emoji">${d.emoji}</span>`);
-    wordEl.className = "p-word " + d.wordClass;
+    bodyEl.innerHTML = d.body || "";
+    contentEl.scrollTop = 0;
     scrim.style.setProperty("--c", COLOR[key]);
     scrim.classList.remove("open");
     void panel.offsetWidth;
