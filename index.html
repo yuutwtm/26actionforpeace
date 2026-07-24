@@ -166,33 +166,29 @@
     max-width: 92vw; line-height: 1.4;
   }
 
-  /* ---------- Replay ---------- */
-  .replay {
-    position: fixed; top: clamp(1rem, 3vh, 1.6rem); right: clamp(1rem, 3vw, 1.8rem);
+  /* ---------- Bottom-right icon controls (story, replay) ---------- */
+  /* Normal flex-flow row placed right before .footer, instead of a fixed
+     position with hand-computed offsets - this guarantees it always sits
+     above the footer, however tall hint+credits render at any viewport. */
+  .bottom-controls {
+    flex: 0 0 auto;
+    display: flex; justify-content: flex-end; align-items: center;
+    gap: 0.6rem;
+    padding: 0 6vw;
+  }
+  .icon-btn {
     width: 46px; height: 46px; border-radius: 50%;
     border: 1px solid #eee; background: var(--paper); color: var(--muted);
-    font-size: 1.25rem; line-height: 1; cursor: pointer;
+    line-height: 1; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 6px 20px -10px rgba(20,17,15,0.35);
     transition: transform 0.3s cubic-bezier(.2,.8,.2,1), color 0.2s ease;
-    z-index: 40;
   }
+  .icon-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .replay { font-size: 1.25rem; }
   .replay:hover { transform: rotate(-45deg); color: var(--ink); }
-  .replay:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-
-  .story-toggle {
-    position: fixed; top: clamp(1rem, 3vh, 1.6rem);
-    right: calc(clamp(1rem, 3vw, 1.8rem) + 46px + 0.6rem);
-    width: 46px; height: 46px; border-radius: 50%;
-    border: 1px solid #eee; background: var(--paper); color: var(--muted);
-    font-size: 1.15rem; line-height: 1; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 6px 20px -10px rgba(20,17,15,0.35);
-    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), color 0.2s ease;
-    z-index: 40;
-  }
+  .story-toggle { font-size: 1.15rem; }
   .story-toggle:hover { transform: scale(1.12); color: var(--ink); }
-  .story-toggle:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   /* ---------- Spill panel ---------- */
   .scrim {
@@ -344,6 +340,15 @@
     z-index: 40;
     display: flex; flex-direction: column; gap: 0.3rem;
   }
+  .hud .stat-row { display: flex; align-items: center; gap: 0.35rem; }
+  .hud .stat-label {
+    font-family: var(--font-latin);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    font-size: clamp(0.62rem, 1.5vw, 0.8rem);
+  }
+  .hud .stat-label.hp { color: var(--coral); }
+  .hud .stat-label.mp { color: var(--electric-blue); }
   .hud .hearts {
     display: flex; gap: 0.12em;
     font-size: clamp(0.95rem, 2.4vw, 1.3rem);
@@ -398,12 +403,20 @@
   </main>
 
   <div class="hud" id="hud" role="img" aria-label="">
-    <div class="hearts" id="hpHearts" aria-hidden="true"></div>
-    <div class="mp-track" aria-hidden="true"><div class="mp-fill" id="mpFill"></div></div>
+    <div class="stat-row">
+      <span class="stat-label hp" aria-hidden="true">HP</span>
+      <div class="hearts" id="hpHearts" aria-hidden="true"></div>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label mp" aria-hidden="true">MP</span>
+      <div class="mp-track" aria-hidden="true"><div class="mp-fill" id="mpFill"></div></div>
+    </div>
   </div>
 
-  <button class="story-toggle" id="storyToggle" type="button" aria-label="스토리 다시 보기">🗺️</button>
-  <button class="replay" id="replay" type="button" aria-label="다시 보기 (Replay)">&#8635;</button>
+  <div class="bottom-controls">
+    <button class="icon-btn story-toggle" id="storyToggle" type="button" aria-label="스토리 다시 보기">🗺️</button>
+    <button class="icon-btn replay" id="replay" type="button" aria-label="다시 보기 (Replay)">&#8635;</button>
+  </div>
 
   <div class="footer">
     <p class="hint" id="hint">단어를 눌러 펼치기 &nbsp;·&nbsp; <b>Tap a word</b></p>
