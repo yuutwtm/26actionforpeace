@@ -82,7 +82,10 @@
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    background: var(--paper);
+    background:
+      radial-gradient(140% 90% at 50% -10%, rgba(20,17,15,0.05), transparent 60%),
+      radial-gradient(140% 90% at 50% 110%, rgba(20,17,15,0.07), transparent 60%),
+      var(--paper);
     color: var(--ink);
     font-family: var(--font-ko);
     -webkit-font-smoothing: antialiased;
@@ -197,8 +200,10 @@
     line-height: 1; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 6px 20px -10px rgba(20,17,15,0.35);
-    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), color 0.2s ease;
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), color 0.2s ease, box-shadow 0.3s ease;
   }
+  /* wax-seal glow instead of a plain hover state */
+  .icon-btn:hover { box-shadow: 0 6px 20px -10px rgba(20,17,15,0.35), 0 0 0 3px rgba(242,183,5,0.4); }
   .icon-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   .replay { font-size: 1.25rem; }
   .replay:hover { transform: rotate(-45deg); color: var(--ink); }
@@ -239,6 +244,9 @@
   .fill {
     position: absolute; inset: 0;
     background: var(--wash);
+    /* item-rarity ring in the popup's own accent color, like a loot-item frame -
+       lives here (not on .panel) so it paints above this wash layer, not under it */
+    box-shadow: inset 0 0 0 3px var(--c);
     clip-path: inset(0 0 100% 0);
     transition: clip-path 0.62s cubic-bezier(.5,0,.1,1);
   }
@@ -295,29 +303,45 @@
     letter-spacing: normal; padding: 0.6em 1em; border-radius: 999px;
     cursor: pointer; box-shadow: 0 6px 20px -8px rgba(20,17,15,0.35);
     outline: none;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
   }
-  .close:hover { transform: scale(1.05); }
+  .close:hover { transform: scale(1.05); box-shadow: 0 6px 20px -8px rgba(20,17,15,0.35), 0 0 0 3px rgba(242,183,5,0.4); }
   .close:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
 
   /* ---------- Intro tutorial popup ---------- */
   /* Antique-paper look with 3 horizontal crease bands, like a map folded
-     into quarters: a repeating shadow+highlight pair every 25% of height. */
+     into quarters: a repeating shadow+highlight pair every 25% of height.
+     Plus a small sparkle-shaped flourish tucked into each corner. */
   .intro-panel {
     background-color: var(--antique-paper);
-    background-image: repeating-linear-gradient(to bottom,
-      rgba(101, 74, 33, 0) 0,
-      rgba(101, 74, 33, 0) calc(25% - 5px),
-      rgba(101, 74, 33, 0.25) calc(25% - 5px),
-      rgba(101, 74, 33, 0.25) 25%,
-      rgba(255, 250, 235, 0.6) 25%,
-      rgba(255, 250, 235, 0.6) calc(25% + 5px),
-      rgba(101, 74, 33, 0) calc(25% + 5px)
-    );
+    background-image:
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.4%29%27/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.4%29%27/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.4%29%27/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.4%29%27/%3E%3C/svg%3E"),
+      repeating-linear-gradient(to bottom,
+        rgba(101, 74, 33, 0) 0,
+        rgba(101, 74, 33, 0) calc(25% - 5px),
+        rgba(101, 74, 33, 0.25) calc(25% - 5px),
+        rgba(101, 74, 33, 0.25) 25%,
+        rgba(255, 250, 235, 0.6) 25%,
+        rgba(255, 250, 235, 0.6) calc(25% + 5px),
+        rgba(101, 74, 33, 0) calc(25% + 5px)
+      );
+    background-position: top 12px left 12px, top 12px right 12px, bottom 12px left 12px, bottom 12px right 12px, 0 0;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+    background-size: 20px 20px, 20px 20px, 20px 20px, 20px 20px, auto;
     /* real paper has near-square corners, not an app-card radius */
     border-radius: 6px;
     outline: none;
-    box-shadow: 0 40px 90px -30px rgba(20,17,15,0.4), 0 4px 14px rgba(20,17,15,0.22), inset 0 0 60px rgba(101, 74, 33, 0.18);
+    /* double-line inset frame, like a parchment border, plus the drop shadows */
+    box-shadow:
+      inset 0 0 0 2px rgba(101, 74, 33, 0.4),
+      inset 0 0 0 6px var(--antique-paper),
+      inset 0 0 0 8px rgba(101, 74, 33, 0.28),
+      0 40px 90px -30px rgba(20,17,15,0.4),
+      0 4px 14px rgba(20,17,15,0.22),
+      inset 0 0 60px rgba(101, 74, 33, 0.18);
   }
 
   .intro-content {
@@ -345,18 +369,24 @@
     -webkit-appearance: none; appearance: none; border: 0;
     font-family: var(--font-ko); font-size: clamp(0.85rem, 1.6vw, 1.05rem);
     padding: 0.6em 1.4em; border-radius: 999px; cursor: pointer;
-    outline: none; transition: transform 0.2s ease;
+    outline: none; transition: transform 0.2s ease, box-shadow 0.3s ease;
   }
-  .intro-btn:hover { transform: scale(1.05); }
+  .intro-btn:hover { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(242,183,5,0.45); }
   .intro-btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
   .intro-btn.intro-next { background: var(--ink); color: var(--paper); }
   .intro-btn.intro-prev { background: none; color: var(--muted); }
 
   /* ---------- HUD (HP/MP), randomized each page load ---------- */
+  /* A carved-plate frame instead of loose floating icons */
   .hud {
     position: fixed; top: clamp(1rem, 3vh, 1.6rem); left: clamp(1rem, 3vw, 1.8rem);
     z-index: 40;
     display: flex; flex-direction: column; gap: 0.3rem;
+    background: rgba(20, 17, 15, 0.05);
+    border: 1px solid rgba(20, 17, 15, 0.12);
+    border-radius: 12px;
+    padding: 0.45rem 0.65rem;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 6px rgba(20,17,15,0.12);
   }
   .hud .stat-row { display: flex; align-items: center; gap: 0.35rem; }
   .hud .stat-label {
@@ -373,16 +403,44 @@
     line-height: 1;
   }
   .hud .heart.empty { opacity: 0.25; filter: grayscale(1); }
+
+  @keyframes hp-pulse {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(255,60,60,0)); }
+    50% { filter: drop-shadow(0 0 5px rgba(255,60,60,0.85)); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hud .hearts.low-hp { animation: hp-pulse 1.4s ease-in-out infinite; }
+  }
+
   .hud .mp-track {
+    position: relative;
     width: clamp(70px, 18vw, 110px); height: 8px; border-radius: 999px;
     background: rgba(20, 17, 15, 0.08);
     box-shadow: inset 0 0 0 1px rgba(20, 17, 15, 0.08);
     overflow: hidden;
   }
   .hud .mp-fill {
+    position: relative;
     height: 100%; border-radius: 999px;
-    background: var(--electric-blue);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.55), transparent 45%),
+      var(--electric-blue);
     box-shadow: 0 0 8px 1px rgba(0, 195, 255, 0.6);
+    overflow: hidden;
+  }
+  /* a faint sweep suggesting a potion's liquid catching the light */
+  .hud .mp-fill::after {
+    content: "";
+    position: absolute; top: 0; left: -30%;
+    width: 30%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hud .mp-fill::after { animation: mp-shimmer 2.6s ease-in-out infinite; }
+  }
+  @keyframes mp-shimmer {
+    0% { left: -30%; }
+    100% { left: 130%; }
   }
 
   @keyframes hud-tremble {
@@ -398,6 +456,25 @@
     90% { transform: translate(-2px, 1px) rotate(-1deg); }
   }
   .hud.tremble { animation: hud-tremble 0.7s cubic-bezier(.36,.07,.19,.97) both; }
+
+  /* Story slide changes turn like a page instead of just swapping text */
+  @keyframes page-turn {
+    0%   { transform: perspective(600px) rotateY(0deg);   opacity: 1; }
+    40%  { transform: perspective(600px) rotateY(-10deg); opacity: 0.82; }
+    100% { transform: perspective(600px) rotateY(0deg);   opacity: 1; }
+  }
+  .intro-text.page-turn { animation: page-turn 0.5s ease; transform-origin: left center; }
+
+  /* A little pop when an item's icon appears in its popup */
+  @keyframes sparkle-pop {
+    0%   { transform: scale(0.4) rotate(-18deg); opacity: 0; }
+    60%  { transform: scale(1.25) rotate(8deg);  opacity: 1; }
+    100% { transform: scale(1) rotate(0deg);     opacity: 1; }
+  }
+  .p-word .sparkle-emoji { display: inline-block; }
+  @media (prefers-reduced-motion: no-preference) {
+    .p-word .sparkle-emoji { animation: sparkle-pop 0.5s cubic-bezier(.2,.8,.3,1.4) both; }
+  }
 </style>
 </head>
 <body>
@@ -483,6 +560,7 @@
     hearts.innerHTML = Array.from({ length: HP_MAX }, (_, i) =>
       `<span class="heart${i < hp ? "" : " empty"}">❤️</span>`
     ).join("");
+    if (hp <= 2) hearts.classList.add("low-hp");
 
     document.getElementById("mpFill").style.width = mp + "%";
     hud.setAttribute("aria-label", `체력 ${hp}/${HP_MAX}, 마나 ${mp}%`);
@@ -604,7 +682,8 @@
     lastFocus = document.activeElement;
     kicker.textContent = KICKER_TEXT;
     title.textContent = d.phrase;
-    wordEl.textContent = d.text + d.emoji;
+    wordEl.textContent = d.text;
+    wordEl.insertAdjacentHTML("beforeend", `<span class="sparkle-emoji">${d.emoji}</span>`);
     wordEl.className = "p-word " + d.wordClass;
     scrim.style.setProperty("--c", COLOR[key]);
     scrim.style.setProperty("--wash", WASH[key]);
@@ -638,13 +717,18 @@
   const introNext  = document.getElementById("introNext");
   let introIndex = 0;
 
-  function renderIntro() {
+  function renderIntro(animate = true) {
     introText.innerHTML = INTRO_SLIDES[introIndex];
     introPrev.hidden = introIndex === 0;
+    if (animate) {
+      introText.classList.remove("page-turn");
+      void introText.offsetWidth;
+      introText.classList.add("page-turn");
+    }
   }
   function openIntro() {
     introIndex = 0;
-    renderIntro();
+    renderIntro(false);
     introScrim.classList.add("open");
     document.body.style.overflow = "hidden";
     requestAnimationFrame(() => introPanel.focus());
