@@ -195,10 +195,19 @@
     font-size: clamp(0.72rem, 1.4vw, 1rem);
     font-weight: 500;
     letter-spacing: normal; color: var(--muted);
-    opacity: 0; text-align: center; white-space: nowrap;
+    opacity: 0; text-align: center;
+    line-height: 1.5;
   }
-  .hint a { color: inherit; text-decoration: none; }
-  .hint a:hover, .hint a:focus-visible { text-decoration: underline; }
+  /* .hint-link is a button (it opens a dialog) styled to match the plain links */
+  .hint a, .hint .hint-link { color: inherit; text-decoration: none; }
+  .hint a:hover, .hint a:focus-visible,
+  .hint .hint-link:hover, .hint .hint-link:focus-visible { text-decoration: underline; }
+  .hint .hint-link {
+    -webkit-appearance: none; appearance: none;
+    background: none; border: 0; padding: 0;
+    font: inherit; cursor: pointer;
+  }
+  .hint .hint-sep { margin: 0 0.5em; opacity: 0.55; }
 
   .credits {
     font-family: var(--font-ko);
@@ -426,6 +435,25 @@
     margin-top: clamp(1.4rem, 4vw, 2.2rem);
   }
 
+  /* Party (division members) popup - same parchment card as the story popup.
+     The heading matches the story text exactly; the name list is 0.8x that
+     size in Pretendard 600. */
+  .party-head {
+    font-family: var(--font-story);
+    color: var(--ink);
+    font-weight: 500;
+    line-height: 1.45;
+    font-size: clamp(1.6rem, 4.2vw, 2.6rem);
+  }
+  .party-names {
+    font-family: var(--font-ko-first);
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.45;
+    font-size: clamp(1.28rem, 3.36vw, 2.08rem);
+    margin-top: clamp(0.8rem, 2.4vw, 1.4rem);
+  }
+
   .intro-btn {
     -webkit-appearance: none; appearance: none; border: 0;
     font-family: var(--font-story); font-size: clamp(0.85rem, 1.6vw, 1.05rem);
@@ -573,7 +601,7 @@
   <p class="closing">지금까지 🕊️피해자 없는 피스☮️였습니다! ✌️</p>
 
   <div class="footer">
-    <p class="hint" id="hint"><a href="mailto:yuutwtm@gmail.com">Site credits</a></p>
+    <p class="hint" id="hint"><a href="mailto:yuutwtm@gmail.com">Site credits</a><span class="hint-sep" aria-hidden="true">·</span><button class="hint-link" id="partyToggle" type="button" aria-haspopup="dialog">🕊️피해자 없는 피스 파티원☮️</button></p>
     <p class="credits" id="credits">Action for Tomorrow &nbsp;-&nbsp; 2026학년도 세종RCE ESD 국제청소년캠프 평화분과</p>
   </div>
 
@@ -597,6 +625,38 @@
         <div class="intro-nav">
           <button class="intro-btn intro-prev" id="introPrev" type="button" hidden>이전</button>
           <button class="intro-btn intro-next" id="introNext" type="button">다음</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scrim" id="partyScrim" role="presentation">
+    <div class="panel intro-panel" role="dialog" aria-modal="true" aria-label="평화분과 파티원" tabindex="-1">
+      <div class="intro-content">
+        <p class="party-head">2026 세종RCE ESD 국제청소년캠프<br>평화분과 🕊️피해자 없는 피스☮️</p>
+        <p class="party-names">
+          양지중학교 - 김민주<br>
+          글벗중학교 - 김윤주<br>
+          반곡중학교 - 오하진<br>
+          어진중학교 - 홍다빈<br>
+          양지중학교 - 최재원<br>
+          고운중학교 - 최가은<br>
+          새롬중학교 - 김수민<br>
+          글벗중학교 - 최은서<br>
+          양지중학교 - 김지아<br>
+          보람중학교 - 차연우<br>
+          고운중학교 - 양조이<br>
+          한솔고등학교 - 홍지율<br>
+          아름고등학교 - 전보미<br>
+          세종국제고등학교 - 정선민<br>
+          노곡중학교 - 송선우<br>
+          노곡중학교 - 송지우<br>
+          서인천고등학교 - 김규인<br>
+          영신중학교 - 박지율<br>
+          지도교사 해밀중학교 성유경
+        </p>
+        <div class="intro-nav">
+          <button class="intro-btn intro-next" id="partyClose" type="button">닫기</button>
         </div>
       </div>
     </div>
@@ -782,7 +842,7 @@
   const replayBtn = document.getElementById("replay");
   replayBtn.addEventListener("click", play);
   document.addEventListener("keydown", (e) => {
-    if ((e.key === "r" || e.key === "R") && !scrim.classList.contains("open") && !introScrim.classList.contains("open")) play();
+    if ((e.key === "r" || e.key === "R") && !scrim.classList.contains("open") && !introScrim.classList.contains("open") && !partyScrim.classList.contains("open")) play();
   });
 
   // ---------- Spill panel ----------
@@ -961,9 +1021,37 @@
 
   openIntro();
 
+  // ---------- Party (division members) popup ----------
+  const partyScrim  = document.getElementById("partyScrim");
+  const partyPanel  = partyScrim.querySelector(".panel");
+  const partyToggle = document.getElementById("partyToggle");
+  const partyCloseB = document.getElementById("partyClose");
+  let partyLastFocus = null;
+
+  function openParty() {
+    partyLastFocus = document.activeElement;
+    partyScrim.classList.add("open");
+    document.body.style.overflow = "hidden";
+    requestAnimationFrame(() => partyPanel.focus());
+  }
+  function closeParty() {
+    partyScrim.classList.remove("open");
+    document.body.style.overflow = "";
+    if (partyLastFocus) partyLastFocus.focus();
+  }
+
+  partyToggle.addEventListener("click", () => {
+    if (scrim.classList.contains("open")) close();
+    if (introScrim.classList.contains("open")) closeIntro();
+    openParty();
+  });
+  partyCloseB.addEventListener("click", closeParty);
+  partyScrim.addEventListener("click", (e) => { if (e.target === partyScrim) closeParty(); });
+
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
     if (introScrim.classList.contains("open")) closeIntro();
+    else if (partyScrim.classList.contains("open")) closeParty();
     else if (scrim.classList.contains("open")) close();
   });
 </script>
