@@ -1,1 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Peace · 평화 · 平和</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  :root {
+    --ink: #14110f;
+    --paper: #ffffff;
+    --muted: #a49c96;
+
+    --coral: #ff9aa2;   /* pastel coral pink */
+    --lemon: #f2b705;
+    --mint:  #16b4cd;   /* mint pushed toward blue */
+
+    --coral-wash: #fff1f2;
+    --lemon-wash: #fff8df;
+    --mint-wash:  #e8f8fb;
+
+    --font-latin: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-ko: "Helvetica Neue", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    --font-ko-first: "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-ko);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* ---------- Stage ---------- */
+  .stage {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(1.4rem, 4.2vh, 3.4rem);
+    padding: clamp(4rem, 10vh, 7rem) 6vw clamp(6rem, 14vh, 9rem);
+  }
+
+  .word {
+    -webkit-appearance: none; appearance: none;
+    background: none; border: 0; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.45rem; padding: 0.2rem 0.6rem; border-radius: 18px;
+    transition: transform 0.35s cubic-bezier(.2,.8,.2,1);
+  }
+  .word:focus-visible { outline: 3px solid var(--ink); outline-offset: 6px; }
+  @media (hover: hover) { .word:hover { transform: translateY(-6px); } }
+  .word:active { transform: translateY(-2px) scale(0.99); }
+
+  .word .glyphs {
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    font-size: clamp(3.4rem, 15vw, 12rem);
+    color: var(--c);
+    display: inline-flex;
+    white-space: nowrap;
+    min-height: 0.92em;
+  }
+  .word[data-lang="peace"] .glyphs { font-family: var(--font-latin); }
+  .word[data-lang="hangul"] .glyphs,
+  .word[data-lang="hanja"]  .glyphs { font-family: var(--font-ko-first); }
+  .glyphs span { display: inline-block; opacity: 0; }
+
+  .word .label {
+    font-family: var(--font-latin);
+    font-size: clamp(0.72rem, 1.4vw, 0.95rem);
+    letter-spacing: normal;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+  }
+  .word[data-lang="hangul"] .label,
+  .word[data-lang="hanja"] .label { font-family: var(--font-ko-first); text-transform: none; }
+
+  /* ---------- Footer: hint + credits ---------- */
+  .hint {
+    position: fixed; left: 50%; bottom: clamp(3.6rem, 8vh, 5rem);
+    transform: translateX(-50%);
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    letter-spacing: normal; color: var(--muted);
+    opacity: 0; text-align: center; white-space: nowrap;
+  }
+  .hint b { font-family: var(--font-latin); font-weight: 500; }
+
+  .credits {
+    position: fixed; left: 50%; bottom: clamp(1.2rem, 3.2vh, 2rem);
+    transform: translateX(-50%);
+    font-family: var(--font-ko);
+    font-size: clamp(0.72rem, 1.5vw, 0.92rem);
+    letter-spacing: normal; color: var(--muted);
+    opacity: 0; text-align: center;
+    max-width: 92vw; line-height: 1.5;
+  }
+
+  /* ---------- Replay ---------- */
+  .replay {
+    position: fixed; top: clamp(1rem, 3vh, 1.6rem); right: clamp(1rem, 3vw, 1.8rem);
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 1px solid #eee; background: var(--paper); color: var(--muted);
+    font-size: 1.25rem; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 20px -10px rgba(20,17,15,0.35);
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), color 0.2s ease;
+    z-index: 40;
+  }
+  .replay:hover { transform: rotate(-45deg); color: var(--ink); }
+  .replay:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+  /* ---------- Spill panel ---------- */
+  .scrim {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: clamp(1rem, 4vw, 3rem);
+    background: rgba(20, 17, 15, 0);
+    visibility: hidden;
+    transition: background 0.35s ease, visibility 0s linear 0.55s;
+    z-index: 50;
+  }
+  .scrim.open {
+    background: rgba(20, 17, 15, 0.24);
+    visibility: visible;
+    transition: background 0.35s ease, visibility 0s;
+  }
+
+  .panel {
+    position: relative;
+    width: min(960px, 100%);
+    max-height: 90dvh;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--paper);
+    box-shadow: 0 40px 90px -30px rgba(20,17,15,0.4);
+    transform: translateY(14px) scale(0.985);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease;
+  }
+  .scrim.open .panel { transform: none; opacity: 1; }
+
+  .fill {
+    position: absolute; inset: 0;
+    background: var(--wash);
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.62s cubic-bezier(.5,0,.1,1);
+  }
+  .scrim.open .fill { clip-path: inset(0 0 0 0); }
+
+  .content {
+    position: relative;
+    padding: clamp(2.4rem, 6vw, 5rem);
+    overflow-y: auto; max-height: 90dvh;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.4s ease 0.3s, transform 0.5s cubic-bezier(.2,.8,.2,1) 0.3s;
+  }
+  .scrim.open .content { opacity: 1; transform: none; }
+
+  .kicker {
+    font-family: var(--font-latin);
+    font-size: clamp(0.8rem, 1.6vw, 1.05rem);
+    letter-spacing: normal; text-transform: uppercase;
+    color: var(--c); margin-bottom: clamp(0.7rem, 1.8vw, 1.1rem);
+    font-weight: 600;
+  }
+  .kicker.ko { font-family: var(--font-ko-first); text-transform: none; }
+
+  .p-title {
+    font-weight: 800; line-height: 0.95; letter-spacing: -0.02em;
+    color: var(--c);
+    font-size: clamp(2.6rem, 8vw, 5.5rem);
+    margin-bottom: clamp(1rem, 2.6vw, 1.8rem);
+  }
+  .p-title.latin { font-family: var(--font-latin); }
+  .p-title.ko    { font-family: var(--font-ko-first); }
+
+  .p-phrase {
+    font-family: var(--font-latin);
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.02;
+    color: var(--ink);
+    font-size: clamp(2.4rem, 8.5vw, 5.5rem);
+  }
+
+  .close {
+    position: absolute; top: clamp(1.2rem, 3vw, 2.2rem); right: clamp(1.2rem, 3vw, 2.2rem);
+    -webkit-appearance: none; appearance: none; border: 0;
+    background: var(--paper); color: var(--ink);
+    font-family: var(--font-ko); font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+    letter-spacing: normal; padding: 0.6em 1em; border-radius: 999px;
+    cursor: pointer; box-shadow: 0 6px 20px -8px rgba(20,17,15,0.35);
+    transition: transform 0.2s ease; z-index: 2;
+  }
+  .close:hover { transform: scale(1.05); }
+  .close:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+</style>
+</head>
+<body>
+  <main class="stage" id="stage">
+    <button class="word" data-lang="peace" data-key="peace" style="--c: var(--coral)" aria-haspopup="dialog" aria-label="Peace">
+      <span class="glyphs" aria-hidden="true"></span>
+      <span class="label">English</span>
+    </button>
+
+    <button class="word" data-lang="hangul" data-key="hangul" style="--c: var(--mint)" aria-haspopup="dialog" aria-label="평화">
+      <span class="glyphs" aria-hidden="true"></span>
+      <span class="label">한국어</span>
+    </button>
+
+    <button class="word" data-lang="hanja" data-key="hanja" style="--c: var(--lemon)" aria-haspopup="dialog" aria-label="平和">
+      <span class="glyphs" aria-hidden="true"></span>
+      <span class="label">漢字</span>
+    </button>
+  </main>
+
+  <button class="replay" id="replay" type="button" aria-label="다시 보기 (Replay)">&#8635;</button>
+
+  <p class="hint" id="hint">단어를 눌러 펼치기 &nbsp;·&nbsp; <b>Tap a word</b></p>
+  <p class="credits" id="credits">Action for Tomorrow &nbsp;-&nbsp; 2026학년도 세종RCE ESD 국제청소년캠프 평화분과</p>
+
+  <div class="scrim" id="scrim" role="presentation">
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title" tabindex="-1">
+      <div class="fill"></div>
+      <div class="content">
+        <button class="close" id="close" type="button">닫기 ✕</button>
+        <div class="kicker" id="p-kicker"></div>
+        <h2 class="p-title" id="p-title"></h2>
+        <p class="p-phrase" id="p-phrase"></p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const DATA = {
+    peace:  { text: "Peace", titleClass: "latin", kicker: "English", kClass: "",   phrase: "our tomorrow" },
+    hangul: { text: "평화",  titleClass: "ko",    kicker: "한국어",  kClass: "ko", phrase: "your actions" },
+    hanja:  { text: "平和",  titleClass: "ko",    kicker: "漢字",    kClass: "ko", phrase: "our actions" }
+  };
+  const WASH  = { peace: "var(--coral-wash)", hangul: "var(--mint-wash)", hanja: "var(--lemon-wash)" };
+  const COLOR = { peace: "var(--coral)",      hangul: "var(--mint)",      hanja: "var(--lemon)" };
+
+  // Decompose a Hangul syllable into build stages: lead -> lead+vowel -> full.
+  const COMPAT_LEAD = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  function stagesFor(ch) {
+    const code = ch.codePointAt(0);
+    if (code >= 0xAC00 && code <= 0xD7A3) {
+      const s = code - 0xAC00;
+      const L = Math.floor(s / 588), V = Math.floor((s % 588) / 28), T = s % 28;
+      const out = [COMPAT_LEAD[L]];
+      const noTail = String.fromCharCode(0xAC00 + L * 588 + V * 28);
+      if (noTail !== out[0]) out.push(noTail);
+      if (T > 0) out.push(ch);
+      return out;
+    }
+    return [ch];
+  }
+
+  const LETTER = 110, JAMO = 170, WORD = 340, START = 350;
+  const words = Array.from(document.querySelectorAll(".word"));
+  const foot  = [document.getElementById("hint"), document.getElementById("credits")];
+
+  let timers = [];
+  const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+  const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
+  const fadeIn = (el, dur) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: dur, fill: "both" });
+
+  function play() {
+    clearTimers();
+    words.forEach((w) => { w.querySelector(".glyphs").innerHTML = ""; w.querySelector(".label").style.opacity = 0; });
+    foot.forEach((e) => (e.style.opacity = 0));
+
+    let t = START;
+    words.forEach((word) => {
+      const container = word.querySelector(".glyphs");
+      const chars = Array.from(DATA[word.dataset.key].text);
+
+      chars.forEach((ch) => {
+        const stages = stagesFor(ch);
+        const span = document.createElement("span");
+        container.appendChild(span);
+
+        stages.forEach((stg, i) => {
+          const at = t, first = i === 0;
+          later(() => {
+            span.textContent = stg;
+            span.style.opacity = 1;
+            if (reduced) {
+              // build is content, so still step the jamo — just gentle fades
+              span.animate([{ opacity: first ? 0 : 0.45 }, { opacity: 1 }],
+                           { duration: first ? 260 : 150, fill: "both" });
+            } else if (first) {
+              span.animate(
+                [{ opacity: 0, transform: "translateY(.35em)", filter: "blur(8px)" },
+                 { opacity: 1, transform: "none",             filter: "blur(0)"   }],
+                { duration: 560, easing: "cubic-bezier(.2,.75,.2,1)", fill: "both" });
+            } else {
+              span.animate(
+                [{ transform: "scale(.82)", filter: "blur(4px)" },
+                 { transform: "scale(1)",   filter: "blur(0)"   }],
+                { duration: 340, easing: "cubic-bezier(.2,.8,.2,1)" });
+            }
+          }, at);
+          t += (i < stages.length - 1) ? JAMO : LETTER;
+        });
+      });
+
+      const label = word.querySelector(".label");
+      later(() => fadeIn(label, 500), t);
+      t += WORD;
+    });
+
+    later(() => foot.forEach((e) => fadeIn(e, 700)), t + 150);
+  }
+
+  // Start once fonts are ready (prevents a glyph-metric flash on mobile), with a fallback.
+  let booted = false;
+  const boot = () => { if (booted) return; booted = true; requestAnimationFrame(play); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(boot);
+  setTimeout(boot, 800);
+
+  // ---------- Replay ----------
+  const replayBtn = document.getElementById("replay");
+  replayBtn.addEventListener("click", play);
+  document.addEventListener("keydown", (e) => {
+    if ((e.key === "r" || e.key === "R") && !scrim.classList.contains("open")) play();
+  });
+
+  // ---------- Spill panel ----------
+  const scrim  = document.getElementById("scrim");
+  const panel  = scrim.querySelector(".panel");
+  const closeB = document.getElementById("close");
+  const kicker = document.getElementById("p-kicker");
+  const title  = document.getElementById("p-title");
+  const phrase = document.getElementById("p-phrase");
+  let lastFocus = null;
+
+  function open(key) {
+    const d = DATA[key];
+    lastFocus = document.activeElement;
+    kicker.textContent = d.kicker;
+    kicker.className = "kicker " + d.kClass;
+    title.textContent = d.text;
+    title.className = "p-title " + d.titleClass;
+    phrase.textContent = d.phrase;
+    scrim.style.setProperty("--c", COLOR[key]);
+    scrim.style.setProperty("--wash", WASH[key]);
+    scrim.classList.remove("open");
+    void panel.offsetWidth;
+    scrim.classList.add("open");
+    document.body.style.overflow = "hidden";
+    requestAnimationFrame(() => closeB.focus());
+  }
+  function close() {
+    scrim.classList.remove("open");
+    document.body.style.overflow = "";
+    if (lastFocus) lastFocus.focus();
+  }
+
+  words.forEach((w) => w.addEventListener("click", () => open(w.dataset.key)));
+  closeB.addEventListener("click", close);
+  scrim.addEventListener("click", (e) => { if (e.target === scrim) close(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && scrim.classList.contains("open")) close();
+  });
+</script>
+</body>
+</html>
+
+
+
+
 
