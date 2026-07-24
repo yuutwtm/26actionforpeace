@@ -116,15 +116,12 @@
   .glyphs .emoji { margin-left: 0.06em; }
 
   .word .label {
-    font-family: var(--font-latin);
+    font-family: var(--font-ko-first);
     font-size: clamp(0.72rem, 1.4vw, 0.95rem);
     letter-spacing: normal;
-    text-transform: uppercase;
     color: var(--muted);
     opacity: 0;
   }
-  .word[data-lang="hangul"] .label,
-  .word[data-lang="hanja"] .label { font-family: var(--font-ko-first); text-transform: none; }
 
   /* ---------- Footer: hint + credits ---------- */
   .footer {
@@ -326,17 +323,17 @@
   <main class="stage" id="stage">
     <button class="word" data-lang="hangul" data-key="hangul" style="--c: var(--mint)" aria-haspopup="dialog" aria-label="평화">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">한국어</span>
+      <span class="label">아이템 소개</span>
     </button>
 
     <button class="word" data-lang="peace" data-key="peace" style="--c: var(--coral)" aria-haspopup="dialog" aria-label="Peace">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">English</span>
+      <span class="label">아이템 소개</span>
     </button>
 
     <button class="word" data-lang="hanja" data-key="hanja" style="--c: var(--lemon)" aria-haspopup="dialog" aria-label="平和">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">漢字</span>
+      <span class="label">아이템 소개</span>
     </button>
   </main>
 
