@@ -57,16 +57,21 @@
     --paper: #ffffff;
     --muted: #a49c96;
 
-    --coral: #ff9aa2;   /* pastel coral pink */
+    /* pastel item-accent colors */
+    --coral: #ff9aa2;
+    --mint:  #16b4cd;
     --lemon: #f2b705;
-    --mint:  #16b4cd;   /* mint pushed toward blue */
-
-    --coral-wash: #fff1f2;
-    --lemon-wash: #fff8df;
-    --mint-wash:  #e8f8fb;
 
     --antique-paper: #f8f1de;
     --electric-blue: #00c3ff;
+
+    /* deep-turquoise page background + the light text that sits on it */
+    --bg-deep:  #0d3b3b;
+    --page-ink: #f3ece0;
+
+    /* dedicated wax-seal color for the story popup's "다음" button -
+       independent of the item-accent palette above, which is pastel */
+    --wax-burgundy: #7b1e2b;
 
     --font-latin: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --font-ko: "helvetica-neue-lt-pro", "Helvetica Neue", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
@@ -83,10 +88,10 @@
     display: flex;
     flex-direction: column;
     background:
-      radial-gradient(140% 90% at 50% -10%, rgba(20,17,15,0.05), transparent 60%),
-      radial-gradient(140% 90% at 50% 110%, rgba(20,17,15,0.07), transparent 60%),
-      var(--paper);
-    color: var(--ink);
+      radial-gradient(140% 90% at 50% -10%, rgba(0,0,0,0.16), transparent 60%),
+      radial-gradient(140% 90% at 50% 110%, rgba(0,0,0,0.22), transparent 60%),
+      var(--bg-deep);
+    color: var(--page-ink);
     font-family: var(--font-ko);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -102,13 +107,14 @@
     flex: 0 0 auto;
     font-family: var(--font-story);
     font-weight: 700;
-    color: var(--ink);
+    color: var(--page-ink);
     text-align: center;
     line-height: 1.4;
     font-size: clamp(1.15rem, min(4vw, 3.4vh), 2.5rem);
     /* top padding clears the fixed HUD (left) and story/replay buttons
-       (right), which float independently of this element's flex flow */
-    padding: clamp(5.2rem, 13vw, 6.4rem) 6vw 0;
+       (right), which float independently of this element's flex flow, plus
+       a bit of margin below the status box itself */
+    padding: clamp(5.8rem, 14vw, 7.2rem) 6vw 0;
   }
 
   /* ---------- Stage ---------- */
@@ -131,7 +137,7 @@
     gap: 0.45rem; padding: 0.2rem 0.6rem; border-radius: 18px;
     transition: transform 0.35s cubic-bezier(.2,.8,.2,1);
   }
-  .word:focus-visible { outline: 3px solid var(--ink); outline-offset: 6px; }
+  .word:focus-visible { outline: 3px solid var(--page-ink); outline-offset: 6px; }
   @media (hover: hover) { .word:hover { transform: translateY(-6px); } }
   .word:active { transform: translateY(-2px) scale(0.99); }
 
@@ -173,7 +179,8 @@
     letter-spacing: normal; color: var(--muted);
     opacity: 0; text-align: center; white-space: nowrap;
   }
-  .hint b { font-family: var(--font-latin); font-weight: 500; }
+  .hint a { color: inherit; text-decoration: none; }
+  .hint a:hover, .hint a:focus-visible { text-decoration: underline; }
 
   .credits {
     font-family: var(--font-ko);
@@ -204,7 +211,7 @@
   }
   /* wax-seal glow instead of a plain hover state */
   .icon-btn:hover { box-shadow: 0 6px 20px -10px rgba(20,17,15,0.35), 0 0 0 3px rgba(242,183,5,0.4); }
-  .icon-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .icon-btn:focus-visible { outline: 3px solid var(--page-ink); outline-offset: 3px; }
   .replay { font-size: 1.25rem; }
   .replay:hover { transform: rotate(-45deg); color: var(--ink); }
   .story-toggle { font-size: 1.15rem; }
@@ -231,7 +238,7 @@
     display: flex; flex-direction: column;
     width: min(960px, 100%);
     max-height: 90dvh;
-    border-radius: 28px;
+    border-radius: 6px; /* matches .intro-panel - all popups share one paper-cut shape */
     overflow: hidden;
     background: var(--paper);
     box-shadow: 0 40px 90px -30px rgba(20,17,15,0.4);
@@ -241,12 +248,18 @@
   }
   .scrim.open .panel { transform: none; opacity: 1; }
 
+  /* Same antique-paper "item card" look as the story popup, minus the fold
+     creases (this is dense reading text, so keep it flat for legibility).
+     The double-line frame uses the item's own accent color instead of
+     sepia, carrying over the item-rarity identity. Lives on .fill (not
+     .panel) so it paints above the paper background, not under it. */
   .fill {
     position: absolute; inset: 0;
-    background: var(--wash);
-    /* item-rarity ring in the popup's own accent color, like a loot-item frame -
-       lives here (not on .panel) so it paints above this wash layer, not under it */
-    box-shadow: inset 0 0 0 3px var(--c);
+    background-color: var(--antique-paper);
+    box-shadow:
+      inset 0 0 0 2px var(--c),
+      inset 0 0 0 6px var(--antique-paper),
+      inset 0 0 0 8px var(--c);
     clip-path: inset(0 0 100% 0);
     transition: clip-path 0.62s cubic-bezier(.5,0,.1,1);
   }
@@ -309,24 +322,26 @@
   .close:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
 
   /* ---------- Intro tutorial popup ---------- */
-  /* Antique-paper look with 3 horizontal crease bands, like a map folded
-     into quarters: a repeating shadow+highlight pair every 25% of height.
+  /* Antique-paper look with 3 pale horizontal crease bands, like a map
+     folded into quarters - graded across a wider span (rather than a hard
+     edge) so each fold reads as plausible soft paper shading, not a stripe.
      Plus a small sparkle-shaped flourish tucked into each corner. */
   .intro-panel {
     background-color: var(--antique-paper);
     background-image:
-      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.4%29%27/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.4%29%27/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.4%29%27/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.4%29%27/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.22%29%27/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.22%29%27/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.22%29%27/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M12%201%20L14.2%209.8%20L23%2012%20L14.2%2014.2%20L12%2023%20L9.8%2014.2%20L1%2012%20L9.8%209.8%20Z%27%20fill%3D%27rgba%28101%2C74%2C33%2C0.22%29%27/%3E%3C/svg%3E"),
       repeating-linear-gradient(to bottom,
         rgba(101, 74, 33, 0) 0,
-        rgba(101, 74, 33, 0) calc(25% - 5px),
-        rgba(101, 74, 33, 0.25) calc(25% - 5px),
-        rgba(101, 74, 33, 0.25) 25%,
-        rgba(255, 250, 235, 0.6) 25%,
-        rgba(255, 250, 235, 0.6) calc(25% + 5px),
-        rgba(101, 74, 33, 0) calc(25% + 5px)
+        rgba(101, 74, 33, 0.03) calc(25% - 14px),
+        rgba(101, 74, 33, 0.1) calc(25% - 4px),
+        rgba(101, 74, 33, 0.12) 25%,
+        rgba(255, 250, 235, 0.28) 25%,
+        rgba(255, 250, 235, 0.14) calc(25% + 4px),
+        rgba(255, 250, 235, 0.03) calc(25% + 14px),
+        rgba(101, 74, 33, 0) calc(25% + 20px)
       );
     background-position: top 12px left 12px, top 12px right 12px, bottom 12px left 12px, bottom 12px right 12px, 0 0;
     background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
@@ -334,14 +349,15 @@
     /* real paper has near-square corners, not an app-card radius */
     border-radius: 6px;
     outline: none;
-    /* double-line inset frame, like a parchment border, plus the drop shadows */
+    /* double-line inset frame, like a parchment border, plus the drop shadows -
+       all paled down to match the softer crease contrast */
     box-shadow:
-      inset 0 0 0 2px rgba(101, 74, 33, 0.4),
+      inset 0 0 0 2px rgba(101, 74, 33, 0.22),
       inset 0 0 0 6px var(--antique-paper),
-      inset 0 0 0 8px rgba(101, 74, 33, 0.28),
+      inset 0 0 0 8px rgba(101, 74, 33, 0.14),
       0 40px 90px -30px rgba(20,17,15,0.4),
       0 4px 14px rgba(20,17,15,0.22),
-      inset 0 0 60px rgba(101, 74, 33, 0.18);
+      inset 0 0 60px rgba(101, 74, 33, 0.1);
   }
 
   .intro-content {
@@ -356,9 +372,10 @@
     color: var(--ink);
     font-weight: 500;
     line-height: 1.45;
-    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-size: clamp(1.6rem, 4.2vw, 2.6rem);
   }
-  .intro-text .hi { color: var(--mint); font-weight: 700; }
+  .intro-text .syl { display: inline-block; opacity: 0; white-space: pre; }
+  .intro-text .syl.hi { color: var(--mint); font-weight: 700; }
 
   .intro-nav {
     display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
@@ -373,7 +390,17 @@
   }
   .intro-btn:hover { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(242,183,5,0.45); }
   .intro-btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
-  .intro-btn.intro-next { background: var(--ink); color: var(--paper); }
+  .intro-btn.intro-next {
+    background:
+      radial-gradient(circle at 32% 28%, rgba(255,255,255,0.35), transparent 45%),
+      radial-gradient(circle at 70% 75%, rgba(0,0,0,0.25), transparent 55%),
+      var(--wax-burgundy);
+    color: #f3ece0;
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,0.25),
+      inset 0 -2px 3px rgba(0,0,0,0.35),
+      0 2px 5px rgba(0,0,0,0.3);
+  }
   .intro-btn.intro-prev { background: none; color: var(--muted); }
 
   /* ---------- HUD (HP/MP), randomized each page load ---------- */
@@ -382,11 +409,12 @@
     position: fixed; top: clamp(1rem, 3vh, 1.6rem); left: clamp(1rem, 3vw, 1.8rem);
     z-index: 40;
     display: flex; flex-direction: column; gap: 0.3rem;
-    background: rgba(20, 17, 15, 0.05);
-    border: 1px solid rgba(20, 17, 15, 0.12);
-    border-radius: 12px;
+    /* an iron-bound plate with a brass rim, instead of a plain light chip */
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(242, 183, 5, 0.4);
+    border-radius: 6px; /* matches the popup panels' corner radius */
     padding: 0.45rem 0.65rem;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 6px rgba(20,17,15,0.12);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.35);
   }
   .hud .stat-row { display: flex; align-items: center; gap: 0.35rem; }
   .hud .stat-label {
@@ -415,8 +443,8 @@
   .hud .mp-track {
     position: relative;
     width: clamp(70px, 18vw, 110px); height: 8px; border-radius: 999px;
-    background: rgba(20, 17, 15, 0.08);
-    box-shadow: inset 0 0 0 1px rgba(20, 17, 15, 0.08);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
     overflow: hidden;
   }
   .hud .mp-fill {
@@ -456,14 +484,6 @@
     90% { transform: translate(-2px, 1px) rotate(-1deg); }
   }
   .hud.tremble { animation: hud-tremble 0.7s cubic-bezier(.36,.07,.19,.97) both; }
-
-  /* Story slide changes turn like a page instead of just swapping text */
-  @keyframes page-turn {
-    0%   { transform: perspective(600px) rotateY(0deg);   opacity: 1; }
-    40%  { transform: perspective(600px) rotateY(-10deg); opacity: 0.82; }
-    100% { transform: perspective(600px) rotateY(0deg);   opacity: 1; }
-  }
-  .intro-text.page-turn { animation: page-turn 0.5s ease; transform-origin: left center; }
 
   /* A little pop when an item's icon appears in its popup */
   @keyframes sparkle-pop {
@@ -514,7 +534,7 @@
   </div>
 
   <div class="footer">
-    <p class="hint" id="hint">단어를 눌러 펼치기 &nbsp;·&nbsp; <b>Tap a word</b></p>
+    <p class="hint" id="hint"><a href="mailto:yuutwtm@gmail.com">Site credits</a></p>
     <p class="credits" id="credits">Action for Tomorrow &nbsp;-&nbsp; 2026학년도 세종RCE ESD 국제청소년캠프 평화분과</p>
   </div>
 
@@ -532,7 +552,7 @@
     </div>
   </div>
 
-  <div class="scrim" id="introScrim" role="presentation" style="--c: var(--mint)">
+  <div class="scrim" id="introScrim" role="presentation">
     <div class="panel intro-panel" role="dialog" aria-modal="true" aria-label="캠프 안내" tabindex="-1">
       <div class="intro-content">
         <p class="intro-text" id="introText"></p>
@@ -573,8 +593,7 @@
     hangul: { text: "평화",  wordClass: "ko",    phrase: "your actions", emoji: "🕊️" },
     hanja:  { text: "平和",  wordClass: "ko",    phrase: "our actions", emoji: "🧭" }
   };
-  const WASH  = { peace: "var(--coral-wash)", hangul: "var(--mint-wash)", hanja: "var(--lemon-wash)" };
-  const COLOR = { peace: "var(--coral)",      hangul: "var(--mint)",      hanja: "var(--lemon)" };
+  const COLOR = { peace: "var(--coral)", hangul: "var(--mint)", hanja: "var(--lemon)" };
 
   // Decompose a Hangul syllable into build stages: lead -> lead+vowel -> full.
   const COMPAT_LEAD = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -686,7 +705,6 @@
     wordEl.insertAdjacentHTML("beforeend", `<span class="sparkle-emoji">${d.emoji}</span>`);
     wordEl.className = "p-word " + d.wordClass;
     scrim.style.setProperty("--c", COLOR[key]);
-    scrim.style.setProperty("--wash", WASH[key]);
     scrim.classList.remove("open");
     void panel.offsetWidth;
     scrim.classList.add("open");
@@ -717,23 +735,73 @@
   const introNext  = document.getElementById("introNext");
   let introIndex = 0;
 
-  function renderIntro(animate = true) {
-    introText.innerHTML = INTRO_SLIDES[introIndex];
+  const SYLLABLE = 26;
+  let introTimers = [];
+  const laterIntro = (fn, ms) => introTimers.push(setTimeout(fn, ms));
+  const clearIntroTimers = () => { introTimers.forEach(clearTimeout); introTimers = []; };
+
+  function buildSyllableNodes(html) {
+    const src = document.createElement("div");
+    src.innerHTML = html;
+    const segmenter = (typeof Intl !== "undefined" && Intl.Segmenter)
+      ? new Intl.Segmenter("ko", { granularity: "grapheme" })
+      : null;
+    const nodes = [];
+    (function walk(node, hi) {
+      node.childNodes.forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          const graphemes = segmenter
+            ? Array.from(segmenter.segment(child.textContent), (s) => s.segment)
+            : Array.from(child.textContent);
+          graphemes.forEach((g) => {
+            const span = document.createElement("span");
+            span.className = hi ? "syl hi" : "syl";
+            span.textContent = g;
+            nodes.push(span);
+          });
+        } else if (child.nodeName === "BR") {
+          nodes.push(document.createElement("br"));
+        } else {
+          walk(child, hi || child.classList.contains("hi"));
+        }
+      });
+    })(src, false);
+    return nodes;
+  }
+
+  function renderIntro() {
+    clearIntroTimers();
+    introText.innerHTML = "";
     introPrev.hidden = introIndex === 0;
-    if (animate) {
-      introText.classList.remove("page-turn");
-      void introText.offsetWidth;
-      introText.classList.add("page-turn");
-    }
+    const syls = buildSyllableNodes(INTRO_SLIDES[introIndex]);
+    syls.forEach((node) => introText.appendChild(node));
+    let t = 0;
+    syls.forEach((node) => {
+      if (node.nodeName === "BR") return;
+      const at = t;
+      laterIntro(() => {
+        node.style.opacity = 1;
+        if (reduced) {
+          node.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 120, fill: "both" });
+        } else {
+          node.animate(
+            [{ opacity: 0, transform: "translateY(.3em)", filter: "blur(6px)" },
+             { opacity: 1, transform: "none",             filter: "blur(0)"   }],
+            { duration: 320, easing: "cubic-bezier(.2,.75,.2,1)", fill: "both" });
+        }
+      }, at);
+      t += SYLLABLE;
+    });
   }
   function openIntro() {
     introIndex = 0;
-    renderIntro(false);
+    renderIntro();
     introScrim.classList.add("open");
     document.body.style.overflow = "hidden";
     requestAnimationFrame(() => introPanel.focus());
   }
   function closeIntro() {
+    clearIntroTimers();
     introScrim.classList.remove("open");
     document.body.style.overflow = "";
     if (!reduced) hud.classList.add("tremble");
