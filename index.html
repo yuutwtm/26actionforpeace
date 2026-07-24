@@ -262,9 +262,9 @@
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const DATA = {
-    peace:  { text: "Peace", titleClass: "latin", kicker: "English", kClass: "",   phrase: "our tomorrow", emoji: "☮️" },
-    hangul: { text: "평화",  titleClass: "ko",    kicker: "한국어",  kClass: "ko", phrase: "your actions", emoji: "🕊️" },
-    hanja:  { text: "平和",  titleClass: "ko",    kicker: "漢字",    kClass: "ko", phrase: "our actions", emoji: "😌" }
+    peace:  { text: "Peace", wordClass: "latin", kicker: "English", kClass: "",   phrase: "our tomorrow", emoji: "☮️" },
+    hangul: { text: "평화",  wordClass: "ko",    kicker: "한국어",  kClass: "ko", phrase: "your actions", emoji: "🕊️" },
+    hanja:  { text: "平和",  wordClass: "ko",    kicker: "漢字",    kClass: "ko", phrase: "our actions", emoji: "🧭" }
   };
   const WASH  = { peace: "var(--coral-wash)", hangul: "var(--mint-wash)", hanja: "var(--lemon-wash)" };
   const COLOR = { peace: "var(--coral)",      hangul: "var(--mint)",      hanja: "var(--lemon)" };
@@ -337,7 +337,6 @@
       const emojiSpan = document.createElement("span");
       emojiSpan.className = "emoji";
       emojiSpan.textContent = DATA[word.dataset.key].emoji;
-      emojiSpan.style.opacity = 0;
       container.appendChild(emojiSpan);
       later(() => fadeIn(emojiSpan, 400), t);
 
@@ -378,7 +377,7 @@
     kicker.className = "kicker " + d.kClass;
     title.textContent = d.phrase;
     wordEl.textContent = d.text + d.emoji;
-    wordEl.className = "p-word " + d.titleClass;
+    wordEl.className = "p-word " + d.wordClass;
     scrim.style.setProperty("--c", COLOR[key]);
     scrim.style.setProperty("--wash", WASH[key]);
     scrim.classList.remove("open");
@@ -402,8 +401,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
