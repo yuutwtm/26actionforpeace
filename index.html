@@ -6,6 +6,7 @@
 <title>Peace · 평화 · 平和</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="https://use.typekit.net/mrb3sjs.css">
 <style>
   :root {
     --ink: #14110f;
@@ -20,8 +21,8 @@
     --lemon-wash: #fff8df;
     --mint-wash:  #e8f8fb;
 
-    --font-latin: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --font-ko: "Helvetica Neue", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    --font-latin: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-ko: "helvetica-neue-lt-pro", "Helvetica Neue", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
     --font-ko-first: "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   }
 
@@ -29,23 +30,28 @@
   html, body { height: 100%; }
 
   body {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
     background: var(--paper);
     color: var(--ink);
     font-family: var(--font-ko);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    overflow: hidden;
   }
 
   /* ---------- Stage ---------- */
   .stage {
-    min-height: 100dvh;
+    flex: 1 1 auto;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: clamp(1.4rem, 4.2vh, 3.4rem);
-    padding: clamp(4rem, 10vh, 7rem) 6vw clamp(6rem, 14vh, 9rem);
+    gap: clamp(0.9rem, 3.2vh, 2.6rem);
+    padding: clamp(1.2rem, 3vh, 3rem) 6vw 0;
+    overflow: hidden;
   }
 
   .word {
@@ -63,7 +69,7 @@
     font-weight: 800;
     line-height: 0.92;
     letter-spacing: -0.02em;
-    font-size: clamp(3.4rem, 15vw, 12rem);
+    font-size: clamp(2.4rem, min(14vw, 11vh), 9rem);
     color: var(--c);
     display: inline-flex;
     white-space: nowrap;
@@ -86,23 +92,26 @@
   .word[data-lang="hanja"] .label { font-family: var(--font-ko-first); text-transform: none; }
 
   /* ---------- Footer: hint + credits ---------- */
+  .footer {
+    flex: 0 0 auto;
+    display: flex; flex-direction: column; align-items: center;
+    gap: clamp(0.3rem, 1vh, 0.6rem);
+    padding: clamp(0.6rem, 2vh, 1.4rem) 6vw clamp(0.8rem, 2.4vh, 1.6rem);
+  }
+
   .hint {
-    position: fixed; left: 50%; bottom: clamp(3.6rem, 8vh, 5rem);
-    transform: translateX(-50%);
-    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    font-size: clamp(0.72rem, 1.4vw, 1rem);
     letter-spacing: normal; color: var(--muted);
     opacity: 0; text-align: center; white-space: nowrap;
   }
   .hint b { font-family: var(--font-latin); font-weight: 500; }
 
   .credits {
-    position: fixed; left: 50%; bottom: clamp(1.2rem, 3.2vh, 2rem);
-    transform: translateX(-50%);
     font-family: var(--font-ko);
-    font-size: clamp(0.72rem, 1.5vw, 0.92rem);
+    font-size: clamp(0.66rem, 1.3vw, 0.92rem);
     letter-spacing: normal; color: var(--muted);
     opacity: 0; text-align: center;
-    max-width: 92vw; line-height: 1.5;
+    max-width: 92vw; line-height: 1.4;
   }
 
   /* ---------- Replay ---------- */
@@ -176,20 +185,20 @@
   .kicker.ko { font-family: var(--font-ko-first); text-transform: none; }
 
   .p-title {
+    font-family: var(--font-latin);
     font-weight: 800; line-height: 0.95; letter-spacing: -0.02em;
     color: var(--c);
     font-size: clamp(2.6rem, 8vw, 5.5rem);
     margin-bottom: clamp(1rem, 2.6vw, 1.8rem);
   }
-  .p-title.latin { font-family: var(--font-latin); }
-  .p-title.ko    { font-family: var(--font-ko-first); }
 
-  .p-phrase {
-    font-family: var(--font-latin);
-    font-weight: 700; letter-spacing: -0.02em; line-height: 1.02;
+  .p-word {
+    font-weight: 600; letter-spacing: -0.01em; line-height: 1.15;
     color: var(--ink);
-    font-size: clamp(2.4rem, 8.5vw, 5.5rem);
+    font-size: clamp(1.2rem, 3.4vw, 1.9rem);
   }
+  .p-word.latin { font-family: var(--font-latin); }
+  .p-word.ko    { font-family: var(--font-ko-first); }
 
   .close {
     position: absolute; top: clamp(1.2rem, 3vw, 2.2rem); right: clamp(1.2rem, 3vw, 2.2rem);
@@ -198,10 +207,11 @@
     font-family: var(--font-ko); font-size: clamp(0.85rem, 1.6vw, 1.05rem);
     letter-spacing: normal; padding: 0.6em 1em; border-radius: 999px;
     cursor: pointer; box-shadow: 0 6px 20px -8px rgba(20,17,15,0.35);
+    outline: none;
     transition: transform 0.2s ease; z-index: 2;
   }
   .close:hover { transform: scale(1.05); }
-  .close:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .close:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
 </style>
 </head>
 <body>
@@ -224,8 +234,10 @@
 
   <button class="replay" id="replay" type="button" aria-label="다시 보기 (Replay)">&#8635;</button>
 
-  <p class="hint" id="hint">단어를 눌러 펼치기 &nbsp;·&nbsp; <b>Tap a word</b></p>
-  <p class="credits" id="credits">Action for Tomorrow &nbsp;-&nbsp; 2026학년도 세종RCE ESD 국제청소년캠프 평화분과</p>
+  <div class="footer">
+    <p class="hint" id="hint">단어를 눌러 펼치기 &nbsp;·&nbsp; <b>Tap a word</b></p>
+    <p class="credits" id="credits">Action for Tomorrow &nbsp;-&nbsp; 2026학년도 세종RCE ESD 국제청소년캠프 평화분과</p>
+  </div>
 
   <div class="scrim" id="scrim" role="presentation">
     <div class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title" tabindex="-1">
@@ -234,7 +246,7 @@
         <button class="close" id="close" type="button">닫기 ✕</button>
         <div class="kicker" id="p-kicker"></div>
         <h2 class="p-title" id="p-title"></h2>
-        <p class="p-phrase" id="p-phrase"></p>
+        <p class="p-word" id="p-word"></p>
       </div>
     </div>
   </div>
@@ -342,7 +354,7 @@
   const closeB = document.getElementById("close");
   const kicker = document.getElementById("p-kicker");
   const title  = document.getElementById("p-title");
-  const phrase = document.getElementById("p-phrase");
+  const wordEl = document.getElementById("p-word");
   let lastFocus = null;
 
   function open(key) {
@@ -350,9 +362,9 @@
     lastFocus = document.activeElement;
     kicker.textContent = d.kicker;
     kicker.className = "kicker " + d.kClass;
-    title.textContent = d.text;
-    title.className = "p-title " + d.titleClass;
-    phrase.textContent = d.phrase;
+    title.textContent = d.phrase;
+    wordEl.textContent = d.text;
+    wordEl.className = "p-word " + d.titleClass;
     scrim.style.setProperty("--c", COLOR[key]);
     scrim.style.setProperty("--wash", WASH[key]);
     scrim.classList.remove("open");
