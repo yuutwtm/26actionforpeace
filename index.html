@@ -180,6 +180,7 @@
 
   .panel {
     position: relative;
+    display: flex; flex-direction: column;
     width: min(960px, 100%);
     max-height: 90dvh;
     border-radius: 28px;
@@ -200,10 +201,21 @@
   }
   .scrim.open .fill { clip-path: inset(0 0 0 0); }
 
+  /* Non-scrolling header row so the close button can never end up with
+     scrolled text sliding underneath it - the button lives outside the
+     scrollable region entirely, rather than floating over it. */
+  .popup-head {
+    position: relative; z-index: 2;
+    flex: 0 0 auto;
+    display: flex; justify-content: flex-end;
+    padding: clamp(1.2rem, 3vw, 2.2rem) clamp(1.2rem, 3vw, 2.2rem) 0;
+  }
+
   .content {
     position: relative;
-    padding: clamp(2.4rem, 6vw, 5rem);
-    overflow-y: auto; max-height: 90dvh;
+    flex: 1 1 auto; min-height: 0;
+    padding: clamp(0.8rem, 2.4vw, 1.6rem) clamp(2.4rem, 6vw, 5rem) clamp(2.4rem, 6vw, 5rem);
+    overflow-y: auto;
     opacity: 0; transform: translateY(16px);
     transition: opacity 0.4s ease 0.3s, transform 0.5s cubic-bezier(.2,.8,.2,1) 0.3s;
   }
@@ -229,20 +241,19 @@
   .p-word {
     font-weight: 600; letter-spacing: -0.01em; line-height: 1.15;
     color: var(--ink);
-    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
   }
   .p-word.latin { font-family: var(--font-latin); }
   .p-word.ko    { font-family: var(--font-ko-first); }
 
   .close {
-    position: absolute; top: clamp(1.2rem, 3vw, 2.2rem); right: clamp(1.2rem, 3vw, 2.2rem);
     -webkit-appearance: none; appearance: none; border: 0;
     background: var(--paper); color: var(--ink);
     font-family: var(--font-ko); font-size: clamp(0.85rem, 1.6vw, 1.05rem);
     letter-spacing: normal; padding: 0.6em 1em; border-radius: 999px;
     cursor: pointer; box-shadow: 0 6px 20px -8px rgba(20,17,15,0.35);
     outline: none;
-    transition: transform 0.2s ease; z-index: 2;
+    transition: transform 0.2s ease;
   }
   .close:hover { transform: scale(1.05); }
   .close:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
@@ -252,10 +263,9 @@
 
   .intro-content {
     position: relative;
-    overflow-y: auto; max-height: 90dvh;
-    /* top padding tracks the close button's own offset + height so the first
-       line of text can never sit under it, regardless of viewport or wrap */
-    padding: calc(clamp(1.2rem, 3vw, 2.2rem) + 3.2rem) clamp(2rem, 6vw, 4rem) clamp(1.8rem, 4vw, 2.8rem);
+    flex: 1 1 auto; min-height: 0;
+    overflow-y: auto;
+    padding: clamp(0.8rem, 2.4vw, 1.6rem) clamp(2rem, 6vw, 4rem) clamp(1.8rem, 4vw, 2.8rem);
   }
 
   .intro-text {
@@ -263,7 +273,7 @@
     color: var(--ink);
     font-weight: 500;
     line-height: 1.6;
-    font-size: clamp(1.6rem, 4.2vw, 2.5rem);
+    font-size: clamp(2rem, 5vw, 3.2rem);
   }
   .intro-text .hi { color: var(--mint); font-weight: 700; }
 
@@ -355,8 +365,10 @@
   <div class="scrim" id="scrim" role="presentation">
     <div class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title" tabindex="-1">
       <div class="fill"></div>
-      <div class="content">
+      <div class="popup-head">
         <button class="close" id="close" type="button">닫기 ✕</button>
+      </div>
+      <div class="content">
         <div class="kicker" id="p-kicker"></div>
         <h2 class="p-title" id="p-title"></h2>
         <p class="p-word" id="p-word"></p>
@@ -366,7 +378,9 @@
 
   <div class="scrim" id="introScrim" role="presentation" style="--c: var(--mint)">
     <div class="panel intro-panel" role="dialog" aria-modal="true" aria-label="캠프 안내" tabindex="-1">
-      <button class="close" id="introClose" type="button">닫기 ✕</button>
+      <div class="popup-head">
+        <button class="close" id="introClose" type="button">닫기 ✕</button>
+      </div>
       <div class="intro-content">
         <p class="intro-text" id="introText"></p>
         <div class="intro-nav">
