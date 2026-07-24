@@ -27,6 +27,9 @@
     --lemon-wash: #fff8df;
     --mint-wash:  #e8f8fb;
 
+    --pale-grey: #f1f0ee;
+    --electric-blue: #00c3ff;
+
     --font-latin: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --font-ko: "helvetica-neue-lt-pro", "Helvetica Neue", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
     --font-ko-first: "Pretendard", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
@@ -219,6 +222,63 @@
   }
   .close:hover { transform: scale(1.05); }
   .close:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
+
+  /* ---------- Intro tutorial popup ---------- */
+  .intro-panel { background: var(--pale-grey); }
+
+  .intro-content {
+    position: relative;
+    padding: clamp(2.4rem, 6vw, 4.5rem) clamp(2rem, 6vw, 4rem) clamp(1.8rem, 4vw, 2.8rem);
+  }
+
+  .intro-text {
+    font-family: var(--font-ko);
+    color: var(--ink);
+    font-weight: 500;
+    line-height: 1.6;
+    font-size: clamp(1.05rem, 2.6vw, 1.5rem);
+  }
+  .intro-text .hi { color: var(--mint); font-weight: 700; }
+
+  .intro-nav {
+    display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
+    margin-top: clamp(1.4rem, 4vw, 2.2rem);
+  }
+
+  .intro-btn {
+    -webkit-appearance: none; appearance: none; border: 0;
+    font-family: var(--font-ko); font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+    padding: 0.6em 1.4em; border-radius: 999px; cursor: pointer;
+    outline: none; transition: transform 0.2s ease;
+  }
+  .intro-btn:hover { transform: scale(1.05); }
+  .intro-btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+  .intro-btn.intro-next { background: var(--ink); color: var(--paper); }
+  .intro-btn.intro-prev { background: none; color: var(--muted); }
+
+  /* ---------- HUD (HP/MP), randomized each page load ---------- */
+  .hud {
+    position: fixed; top: clamp(1rem, 3vh, 1.6rem); left: clamp(1rem, 3vw, 1.8rem);
+    z-index: 40;
+    display: flex; flex-direction: column; gap: 0.3rem;
+  }
+  .hud .hearts {
+    display: flex; gap: 0.12em;
+    font-size: clamp(0.95rem, 2.4vw, 1.3rem);
+    line-height: 1;
+  }
+  .hud .heart.empty { opacity: 0.25; filter: grayscale(1); }
+  .hud .mp-track {
+    width: clamp(70px, 18vw, 110px); height: 8px; border-radius: 999px;
+    background: rgba(20, 17, 15, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(20, 17, 15, 0.08);
+    overflow: hidden;
+  }
+  .hud .mp-fill {
+    height: 100%; border-radius: 999px;
+    background: var(--electric-blue);
+    box-shadow: 0 0 8px 1px rgba(0, 195, 255, 0.6);
+  }
 </style>
 </head>
 <body>
@@ -239,6 +299,11 @@
     </button>
   </main>
 
+  <div class="hud" id="hud" role="img" aria-label="">
+    <div class="hearts" id="hpHearts" aria-hidden="true"></div>
+    <div class="mp-track" aria-hidden="true"><div class="mp-fill" id="mpFill"></div></div>
+  </div>
+
   <button class="replay" id="replay" type="button" aria-label="다시 보기 (Replay)">&#8635;</button>
 
   <div class="footer">
@@ -258,8 +323,36 @@
     </div>
   </div>
 
+  <div class="scrim" id="introScrim" role="presentation" style="--c: var(--mint)">
+    <div class="panel intro-panel" role="dialog" aria-modal="true" aria-label="캠프 안내" tabindex="-1">
+      <button class="close" id="introClose" type="button">닫기 ✕</button>
+      <div class="intro-content">
+        <p class="intro-text" id="introText"></p>
+        <div class="intro-nav">
+          <button class="intro-btn intro-prev" id="introPrev" type="button" hidden>이전</button>
+          <button class="intro-btn intro-next" id="introNext" type="button">다음</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- HUD (HP/MP), randomized each page load ----------
+  (function initHud() {
+    const HP_MAX = 5, HP_MIN = 2;
+    const hp = HP_MIN + Math.floor(Math.random() * (HP_MAX - HP_MIN + 1));
+    const mp = 20 + Math.floor(Math.random() * 81);
+
+    const hearts = document.getElementById("hpHearts");
+    hearts.innerHTML = Array.from({ length: HP_MAX }, (_, i) =>
+      `<span class="heart${i < hp ? "" : " empty"}">❤️</span>`
+    ).join("");
+
+    document.getElementById("mpFill").style.width = mp + "%";
+    document.getElementById("hud").setAttribute("aria-label", `체력 ${hp}/${HP_MAX}, 마나 ${mp}%`);
+  })();
 
   const DATA = {
     peace:  { text: "Peace", wordClass: "latin", kicker: "English", kClass: "",   phrase: "our tomorrow", emoji: "☮️" },
@@ -358,7 +451,7 @@
   const replayBtn = document.getElementById("replay");
   replayBtn.addEventListener("click", play);
   document.addEventListener("keydown", (e) => {
-    if ((e.key === "r" || e.key === "R") && !scrim.classList.contains("open")) play();
+    if ((e.key === "r" || e.key === "R") && !scrim.classList.contains("open") && !introScrim.classList.contains("open")) play();
   });
 
   // ---------- Spill panel ----------
@@ -395,8 +488,60 @@
   words.forEach((w) => w.addEventListener("click", () => open(w.dataset.key)));
   closeB.addEventListener("click", close);
   scrim.addEventListener("click", (e) => { if (e.target === scrim) close(); });
+
+  // ---------- Intro tutorial popup ----------
+  const INTRO_SLIDES = [
+    '이곳 <span class="hi">ESD 국제청소년캠프</span>에 모인 여러분은 지역과 학교, 세상에서 평화🕊️를 달성하기 위해 모험을 떠나야 하는 사명을 가진 <span class="hi">평화의 용사</span>🛡️입니다…',
+    '<span class="hi">몇 시간 후면</span> 캠프가 끝나고 세상🌏으로 나가 평화를 위해 각자의 삶에서 노력하게 될 텐데요…',
+    '잠깐… 이불 밖은 위험해!<br>용사님, 모험을 떠나기 전에, <span class="hi">2026 세종RCE ESD 국제청소년캠프 평화분과</span>🕊️ 친구들이 여러분을 위해 준비한 이 아이템🧪🛡️🪄✨을 잊지 말고 챙겨가세요! 😌'
+  ];
+
+  const introScrim = document.getElementById("introScrim");
+  const introText  = document.getElementById("introText");
+  const introPrev  = document.getElementById("introPrev");
+  const introNext  = document.getElementById("introNext");
+  const introClose = document.getElementById("introClose");
+  let introIndex = 0;
+
+  function renderIntro() {
+    introText.innerHTML = INTRO_SLIDES[introIndex];
+    introPrev.hidden = introIndex === 0;
+  }
+  function openIntro() {
+    introIndex = 0;
+    renderIntro();
+    introScrim.classList.add("open");
+    document.body.style.overflow = "hidden";
+    requestAnimationFrame(() => introClose.focus());
+  }
+  function closeIntro() {
+    introScrim.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  introNext.addEventListener("click", () => {
+    if (introIndex < INTRO_SLIDES.length - 1) {
+      introIndex++;
+      renderIntro();
+    } else {
+      closeIntro();
+    }
+  });
+  introPrev.addEventListener("click", () => {
+    if (introIndex > 0) {
+      introIndex--;
+      renderIntro();
+    }
+  });
+  introClose.addEventListener("click", closeIntro);
+  introScrim.addEventListener("click", (e) => { if (e.target === introScrim) closeIntro(); });
+
+  openIntro();
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && scrim.classList.contains("open")) close();
+    if (e.key !== "Escape") return;
+    if (introScrim.classList.contains("open")) closeIntro();
+    else if (scrim.classList.contains("open")) close();
   });
 </script>
 </body>
