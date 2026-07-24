@@ -552,17 +552,14 @@
   <main class="stage" id="stage">
     <button class="word" data-lang="hangul" data-key="hangul" style="--c: var(--mint)" aria-haspopup="dialog" aria-label="Our Today">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">아이템 설명</span>
     </button>
 
     <button class="word" data-lang="peace" data-key="peace" style="--c: var(--coral)" aria-haspopup="dialog" aria-label="Your Actions">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">아이템 설명</span>
     </button>
 
     <button class="word" data-lang="hanja" data-key="hanja" style="--c: var(--lemon)" aria-haspopup="dialog" aria-label="Our Actions">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">아이템 설명</span>
     </button>
   </main>
 
@@ -585,7 +582,6 @@
         <button class="close" id="close" type="button">닫기 ✕</button>
       </div>
       <div class="content" id="p-content">
-        <div class="kicker" id="p-kicker"></div>
         <h2 class="p-title" id="p-title"></h2>
         <div class="p-body" id="p-body"></div>
       </div>
@@ -625,8 +621,6 @@
     document.getElementById("mpFill").style.width = mp + "%";
     hud.setAttribute("aria-label", `체력 ${hp}/${HP_MAX}, 마나 ${mp}%`);
   })();
-
-  const KICKER_TEXT = "아이템 설명";
 
   const DATA = {
     hangul: {
@@ -728,7 +722,7 @@
 
   function play() {
     clearTimers();
-    words.forEach((w) => { w.querySelector(".glyphs").innerHTML = ""; w.querySelector(".label").style.opacity = 0; });
+    words.forEach((w) => { w.querySelector(".glyphs").innerHTML = ""; });
     foot.forEach((e) => (e.style.opacity = 0));
 
     let t = START;
@@ -771,8 +765,6 @@
       container.appendChild(emojiSpan);
       later(() => fadeIn(emojiSpan, 400), t);
 
-      const label = word.querySelector(".label");
-      later(() => fadeIn(label, 500), t);
       t += WORD;
     });
 
@@ -795,7 +787,6 @@
   const scrim  = document.getElementById("scrim");
   const panel  = scrim.querySelector(".panel");
   const closeB = document.getElementById("close");
-  const kicker = document.getElementById("p-kicker");
   const title  = document.getElementById("p-title");
   const bodyEl = document.getElementById("p-body");
   const contentEl = document.getElementById("p-content");
@@ -807,7 +798,6 @@
     const d = DATA[key];
     currentKey = key;
     lastFocus = document.activeElement;
-    kicker.textContent = KICKER_TEXT;
     title.textContent = d.phrase;
     bodyEl.innerHTML = d.body || "";
     contentEl.scrollTop = 0;
