@@ -229,7 +229,7 @@
   .p-word {
     font-weight: 600; letter-spacing: -0.01em; line-height: 1.15;
     color: var(--ink);
-    font-size: clamp(1.2rem, 3.4vw, 1.9rem);
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
   }
   .p-word.latin { font-family: var(--font-latin); }
   .p-word.ko    { font-family: var(--font-ko-first); }
@@ -252,7 +252,10 @@
 
   .intro-content {
     position: relative;
-    padding: clamp(2.4rem, 6vw, 4.5rem) clamp(2rem, 6vw, 4rem) clamp(1.8rem, 4vw, 2.8rem);
+    overflow-y: auto; max-height: 90dvh;
+    /* top padding tracks the close button's own offset + height so the first
+       line of text can never sit under it, regardless of viewport or wrap */
+    padding: calc(clamp(1.2rem, 3vw, 2.2rem) + 3.2rem) clamp(2rem, 6vw, 4rem) clamp(1.8rem, 4vw, 2.8rem);
   }
 
   .intro-text {
@@ -260,7 +263,7 @@
     color: var(--ink);
     font-weight: 500;
     line-height: 1.6;
-    font-size: clamp(1.05rem, 2.6vw, 1.5rem);
+    font-size: clamp(1.6rem, 4.2vw, 2.5rem);
   }
   .intro-text .hi { color: var(--mint); font-weight: 700; }
 
