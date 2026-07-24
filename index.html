@@ -14,6 +14,31 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
 <link rel="stylesheet" href="https://use.typekit.net/mrb3sjs.css">
 <style>
+  @font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Black.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+  }
+
   :root {
     --ink: #14110f;
     --paper: #ffffff;
@@ -111,6 +136,7 @@
 
   .hint {
     font-size: clamp(0.72rem, 1.4vw, 1rem);
+    font-weight: 500;
     letter-spacing: normal; color: var(--muted);
     opacity: 0; text-align: center; white-space: nowrap;
   }
@@ -119,6 +145,7 @@
   .credits {
     font-family: var(--font-ko);
     font-size: clamp(0.66rem, 1.3vw, 0.92rem);
+    font-weight: 500;
     letter-spacing: normal; color: var(--muted);
     opacity: 0; text-align: center;
     max-width: 92vw; line-height: 1.4;
