@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>2026 세종RCE ESD 국제청소년캠프 평화분과</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmY5YWEyIiBzdHJva2Utd2lkdGg9IjkiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSI1MCIgeTE9IjUwIiB4Mj0iNTAiIHkyPSI5IiBzdHJva2U9IiNmZjlhYTIiIHN0cm9rZS13aWR0aD0iOSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iNTAiIHgyPSIxNCIgeTI9IjcxIiBzdHJva2U9IiNmZjlhYTIiIHN0cm9rZS13aWR0aD0iOSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iNTAiIHgyPSI4NiIgeTI9IjcxIiBzdHJva2U9IiNmZjlhYTIiIHN0cm9rZS13aWR0aD0iOSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo=" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
 <link rel="stylesheet" href="https://use.typekit.net/mrb3sjs.css">
@@ -69,7 +70,7 @@
     font-weight: 800;
     line-height: 0.92;
     letter-spacing: -0.02em;
-    font-size: clamp(2.4rem, min(14vw, 11vh), 9rem);
+    font-size: clamp(2.6rem, min(15.5vw, 12.5vh), 10rem);
     color: var(--c);
     display: inline-flex;
     white-space: nowrap;
@@ -79,6 +80,7 @@
   .word[data-lang="hangul"] .glyphs,
   .word[data-lang="hanja"]  .glyphs { font-family: var(--font-ko-first); }
   .glyphs span { display: inline-block; opacity: 0; }
+  .glyphs .emoji { margin-left: 0.06em; }
 
   .word .label {
     font-family: var(--font-latin);
@@ -216,14 +218,14 @@
 </head>
 <body>
   <main class="stage" id="stage">
-    <button class="word" data-lang="peace" data-key="peace" style="--c: var(--coral)" aria-haspopup="dialog" aria-label="Peace">
-      <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">English</span>
-    </button>
-
     <button class="word" data-lang="hangul" data-key="hangul" style="--c: var(--mint)" aria-haspopup="dialog" aria-label="평화">
       <span class="glyphs" aria-hidden="true"></span>
       <span class="label">한국어</span>
+    </button>
+
+    <button class="word" data-lang="peace" data-key="peace" style="--c: var(--coral)" aria-haspopup="dialog" aria-label="Peace">
+      <span class="glyphs" aria-hidden="true"></span>
+      <span class="label">English</span>
     </button>
 
     <button class="word" data-lang="hanja" data-key="hanja" style="--c: var(--lemon)" aria-haspopup="dialog" aria-label="平和">
@@ -255,9 +257,9 @@
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const DATA = {
-    peace:  { text: "Peace", titleClass: "latin", kicker: "English", kClass: "",   phrase: "our tomorrow" },
-    hangul: { text: "평화",  titleClass: "ko",    kicker: "한국어",  kClass: "ko", phrase: "your actions" },
-    hanja:  { text: "平和",  titleClass: "ko",    kicker: "漢字",    kClass: "ko", phrase: "our actions" }
+    peace:  { text: "Peace", titleClass: "latin", kicker: "English", kClass: "",   phrase: "our tomorrow", emoji: "☮️" },
+    hangul: { text: "평화",  titleClass: "ko",    kicker: "한국어",  kClass: "ko", phrase: "your actions", emoji: "🕊️" },
+    hanja:  { text: "平和",  titleClass: "ko",    kicker: "漢字",    kClass: "ko", phrase: "our actions", emoji: "😌" }
   };
   const WASH  = { peace: "var(--coral-wash)", hangul: "var(--mint-wash)", hanja: "var(--lemon-wash)" };
   const COLOR = { peace: "var(--coral)",      hangul: "var(--mint)",      hanja: "var(--lemon)" };
@@ -327,6 +329,13 @@
         });
       });
 
+      const emojiSpan = document.createElement("span");
+      emojiSpan.className = "emoji";
+      emojiSpan.textContent = DATA[word.dataset.key].emoji;
+      emojiSpan.style.opacity = 0;
+      container.appendChild(emojiSpan);
+      later(() => fadeIn(emojiSpan, 400), t);
+
       const label = word.querySelector(".label");
       later(() => fadeIn(label, 500), t);
       t += WORD;
@@ -363,7 +372,7 @@
     kicker.textContent = d.kicker;
     kicker.className = "kicker " + d.kClass;
     title.textContent = d.phrase;
-    wordEl.textContent = d.text;
+    wordEl.textContent = d.text + d.emoji;
     wordEl.className = "p-word " + d.titleClass;
     scrim.style.setProperty("--c", COLOR[key]);
     scrim.style.setProperty("--wash", WASH[key]);
