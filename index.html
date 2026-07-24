@@ -123,8 +123,17 @@
     font-size: clamp(1.15rem, min(4vw, 3.4vh), 2.5rem);
     padding: clamp(0.6rem, 2.2vh, 1.2rem) 6vw 0;
   }
-  /* closing farewell above the footer - same greeting format */
-  .closing { padding-top: clamp(0.8rem, 2.6vh, 1.6rem); }
+  /* closing farewell above the footer - same greeting format, but hidden
+     until the "Our Actions" item has been closed, then it pops in and
+     stays. Kept in flow (opacity, not display) so revealing it never
+     shifts the layout or overlaps the controls above it. */
+  .closing {
+    padding-top: clamp(0.4rem, 1.4vh, 0.9rem);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.55s cubic-bezier(.2,.8,.2,1);
+  }
+  .closing.revealed { opacity: 1; transform: none; }
 
   /* ---------- Stage ---------- */
   .stage {
@@ -791,9 +800,12 @@
   const bodyEl = document.getElementById("p-body");
   const contentEl = document.getElementById("p-content");
   let lastFocus = null;
+  let currentKey = null;
+  const closingEl = document.querySelector(".closing");
 
   function open(key) {
     const d = DATA[key];
+    currentKey = key;
     lastFocus = document.activeElement;
     kicker.textContent = KICKER_TEXT;
     title.textContent = d.phrase;
@@ -810,6 +822,10 @@
     scrim.classList.remove("open");
     document.body.style.overflow = "";
     if (lastFocus) lastFocus.focus();
+    // The closing farewell appears once the "Our Actions" item has been
+    // read and closed, then stays for the rest of the visit.
+    if (currentKey === "hanja" && closingEl) closingEl.classList.add("revealed");
+    currentKey = null;
   }
 
   words.forEach((w) => w.addEventListener("click", () => open(w.dataset.key)));
