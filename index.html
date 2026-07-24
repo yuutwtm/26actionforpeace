@@ -52,7 +52,7 @@
     --lemon-wash: #fff8df;
     --mint-wash:  #e8f8fb;
 
-    --pale-grey: #f1f0ee;
+    --antique-paper: #f1e3c6;
     --electric-blue: #00c3ff;
 
     --font-latin: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -73,6 +73,10 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow: hidden;
+    /* wrap at word boundaries (incl. Korean spaces) rather than mid-word;
+       still break an overly long single word so it can't overflow */
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 
   /* ---------- Greeting ---------- */
@@ -83,10 +87,10 @@
     color: var(--ink);
     text-align: center;
     line-height: 1.4;
-    font-size: clamp(1rem, min(3.6vw, 3vh), 2.2rem);
+    font-size: clamp(1.15rem, min(4vw, 3.4vh), 2.5rem);
     /* top padding clears the fixed HUD (left) and story/replay buttons
        (right), which float independently of this element's flex flow */
-    padding: clamp(5rem, 13vw, 6.2rem) 6vw 0;
+    padding: clamp(5.2rem, 13vw, 6.4rem) 6vw 0;
   }
 
   /* ---------- Stage ---------- */
@@ -250,13 +254,12 @@
   .scrim.open .content { opacity: 1; transform: none; }
 
   .kicker {
-    font-family: var(--font-latin);
+    font-family: var(--font-ko-first);
     font-size: clamp(0.8rem, 1.6vw, 1.05rem);
-    letter-spacing: normal; text-transform: uppercase;
+    letter-spacing: normal;
     color: var(--c); margin-bottom: clamp(0.7rem, 1.8vw, 1.1rem);
     font-weight: 600;
   }
-  .kicker.ko { font-family: var(--font-ko-first); text-transform: none; }
 
   .p-title {
     font-family: var(--font-latin);
@@ -287,20 +290,34 @@
   .close:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
 
   /* ---------- Intro tutorial popup ---------- */
-  .intro-panel { background: var(--pale-grey); }
+  /* Antique-paper look with 3 horizontal crease bands, like a map folded
+     into quarters: a repeating shadow+highlight pair every 25% of height. */
+  .intro-panel {
+    background-color: var(--antique-paper);
+    background-image: repeating-linear-gradient(to bottom,
+      rgba(101, 74, 33, 0) 0,
+      rgba(101, 74, 33, 0) calc(25% - 5px),
+      rgba(101, 74, 33, 0.25) calc(25% - 5px),
+      rgba(101, 74, 33, 0.25) 25%,
+      rgba(255, 250, 235, 0.6) 25%,
+      rgba(255, 250, 235, 0.6) calc(25% + 5px),
+      rgba(101, 74, 33, 0) calc(25% + 5px)
+    );
+    box-shadow: 0 40px 90px -30px rgba(20,17,15,0.4), inset 0 0 60px rgba(101, 74, 33, 0.18);
+  }
 
   .intro-content {
     position: relative;
     flex: 1 1 auto; min-height: 0;
     overflow-y: auto;
-    padding: clamp(0.8rem, 2.4vw, 1.6rem) clamp(2rem, 6vw, 4rem) clamp(1.8rem, 4vw, 2.8rem);
+    padding: clamp(1.6rem, 4vw, 2.4rem) clamp(2rem, 6vw, 4rem) clamp(1.8rem, 4vw, 2.8rem);
   }
 
   .intro-text {
     font-family: var(--font-ko);
     color: var(--ink);
     font-weight: 500;
-    line-height: 1.6;
+    line-height: 1.45;
     font-size: clamp(2rem, 5vw, 3.2rem);
   }
   .intro-text .hi { color: var(--mint); font-weight: 700; }
@@ -366,17 +383,17 @@
   <main class="stage" id="stage">
     <button class="word" data-lang="hangul" data-key="hangul" style="--c: var(--mint)" aria-haspopup="dialog" aria-label="평화">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">아이템 소개</span>
+      <span class="label">아이템 설명</span>
     </button>
 
     <button class="word" data-lang="peace" data-key="peace" style="--c: var(--coral)" aria-haspopup="dialog" aria-label="Peace">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">아이템 소개</span>
+      <span class="label">아이템 설명</span>
     </button>
 
     <button class="word" data-lang="hanja" data-key="hanja" style="--c: var(--lemon)" aria-haspopup="dialog" aria-label="平和">
       <span class="glyphs" aria-hidden="true"></span>
-      <span class="label">아이템 소개</span>
+      <span class="label">아이템 설명</span>
     </button>
   </main>
 
@@ -409,9 +426,6 @@
 
   <div class="scrim" id="introScrim" role="presentation" style="--c: var(--mint)">
     <div class="panel intro-panel" role="dialog" aria-modal="true" aria-label="캠프 안내" tabindex="-1">
-      <div class="popup-head">
-        <button class="close" id="introClose" type="button">닫기 ✕</button>
-      </div>
       <div class="intro-content">
         <p class="intro-text" id="introText"></p>
         <div class="intro-nav">
@@ -443,10 +457,12 @@
     hud.setAttribute("aria-label", `체력 ${hp}/${HP_MAX}, 마나 ${mp}%`);
   })();
 
+  const KICKER_TEXT = "아이템 설명";
+
   const DATA = {
-    peace:  { text: "Peace", wordClass: "latin", kicker: "English", kClass: "",   phrase: "our tomorrow", emoji: "☮️" },
-    hangul: { text: "평화",  wordClass: "ko",    kicker: "한국어",  kClass: "ko", phrase: "your actions", emoji: "🕊️" },
-    hanja:  { text: "平和",  wordClass: "ko",    kicker: "漢字",    kClass: "ko", phrase: "our actions", emoji: "🧭" }
+    peace:  { text: "Peace", wordClass: "latin", phrase: "our tomorrow", emoji: "☮️" },
+    hangul: { text: "평화",  wordClass: "ko",    phrase: "your actions", emoji: "🕊️" },
+    hanja:  { text: "平和",  wordClass: "ko",    phrase: "our actions", emoji: "🧭" }
   };
   const WASH  = { peace: "var(--coral-wash)", hangul: "var(--mint-wash)", hanja: "var(--lemon-wash)" };
   const COLOR = { peace: "var(--coral)",      hangul: "var(--mint)",      hanja: "var(--lemon)" };
@@ -555,8 +571,7 @@
   function open(key) {
     const d = DATA[key];
     lastFocus = document.activeElement;
-    kicker.textContent = d.kicker;
-    kicker.className = "kicker " + d.kClass;
+    kicker.textContent = KICKER_TEXT;
     title.textContent = d.phrase;
     wordEl.textContent = d.text + d.emoji;
     wordEl.className = "p-word " + d.wordClass;
@@ -586,10 +601,10 @@
   ];
 
   const introScrim = document.getElementById("introScrim");
+  const introPanel = introScrim.querySelector(".panel");
   const introText  = document.getElementById("introText");
   const introPrev  = document.getElementById("introPrev");
   const introNext  = document.getElementById("introNext");
-  const introClose = document.getElementById("introClose");
   let introIndex = 0;
 
   function renderIntro() {
@@ -601,7 +616,7 @@
     renderIntro();
     introScrim.classList.add("open");
     document.body.style.overflow = "hidden";
-    requestAnimationFrame(() => introClose.focus());
+    requestAnimationFrame(() => introPanel.focus());
   }
   function closeIntro() {
     introScrim.classList.remove("open");
@@ -623,7 +638,6 @@
       renderIntro();
     }
   });
-  introClose.addEventListener("click", closeIntro);
   introScrim.addEventListener("click", (e) => { if (e.target === introScrim) closeIntro(); });
 
   const storyToggle = document.getElementById("storyToggle");
