@@ -449,9 +449,10 @@
     font-family: var(--font-ko-first);
     font-weight: 600;
     color: var(--ink);
-    line-height: 1.45;
+    /* tighter than the story text since this reads as a compact inline list */
+    line-height: 1.3;
     font-size: clamp(1.28rem, 3.36vw, 2.08rem);
-    margin-top: clamp(0.8rem, 2.4vw, 1.4rem);
+    margin-top: clamp(0.5rem, 1.6vw, 0.8rem);
   }
 
   .intro-btn {
@@ -634,26 +635,11 @@
     <div class="panel intro-panel" role="dialog" aria-modal="true" aria-label="평화분과 파티원" tabindex="-1">
       <div class="intro-content">
         <p class="party-head">2026 세종RCE ESD 국제청소년캠프<br>평화분과 🕊️피해자 없는 피스☮️</p>
+        <!-- Names run inline separated by "//". Each school-name pair is joined
+             with non-breaking spaces, and the "//" is bound to the entry before
+             it, so a pair never splits across lines and no line starts with "//". -->
         <p class="party-names">
-          양지중학교 - 김민주<br>
-          글벗중학교 - 김윤주<br>
-          반곡중학교 - 오하진<br>
-          어진중학교 - 홍다빈<br>
-          양지중학교 - 최재원<br>
-          고운중학교 - 최가은<br>
-          새롬중학교 - 김수민<br>
-          글벗중학교 - 최은서<br>
-          양지중학교 - 김지아<br>
-          보람중학교 - 차연우<br>
-          고운중학교 - 양조이<br>
-          한솔고등학교 - 홍지율<br>
-          아름고등학교 - 전보미<br>
-          세종국제고등학교 - 정선민<br>
-          노곡중학교 - 송선우<br>
-          노곡중학교 - 송지우<br>
-          서인천고등학교 - 김규인<br>
-          영신중학교 - 박지율<br>
-          지도교사 해밀중학교 성유경
+          양지중학교&nbsp;-&nbsp;김민주&nbsp;// 글벗중학교&nbsp;-&nbsp;김윤주&nbsp;// 반곡중학교&nbsp;-&nbsp;오하진&nbsp;// 어진중학교&nbsp;-&nbsp;홍다빈&nbsp;// 양지중학교&nbsp;-&nbsp;최재원&nbsp;// 고운중학교&nbsp;-&nbsp;최가은&nbsp;// 새롬중학교&nbsp;-&nbsp;김수민&nbsp;// 글벗중학교&nbsp;-&nbsp;최은서&nbsp;// 양지중학교&nbsp;-&nbsp;김지아&nbsp;// 보람중학교&nbsp;-&nbsp;차연우&nbsp;// 고운중학교&nbsp;-&nbsp;양조이&nbsp;// 한솔고등학교&nbsp;-&nbsp;홍지율&nbsp;// 아름고등학교&nbsp;-&nbsp;전보미&nbsp;// 세종국제고등학교&nbsp;-&nbsp;정선민&nbsp;// 노곡중학교&nbsp;-&nbsp;송선우&nbsp;// 노곡중학교&nbsp;-&nbsp;송지우&nbsp;// 서인천고등학교&nbsp;-&nbsp;김규인&nbsp;// 영신중학교&nbsp;-&nbsp;박지율&nbsp;// 지도교사&nbsp;해밀중학교&nbsp;성유경
         </p>
         <div class="intro-nav">
           <button class="intro-btn intro-next" id="partyClose" type="button">닫기</button>
