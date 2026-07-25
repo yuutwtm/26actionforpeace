@@ -449,11 +449,12 @@
     font-family: var(--font-ko-first);
     font-weight: 600;
     color: var(--ink);
-    /* tighter than the story text since this reads as a compact inline list */
-    line-height: 1.3;
-    font-size: clamp(1.28rem, 3.36vw, 2.08rem);
+    /* 0.6x the story text size */
+    line-height: 1.45;
+    font-size: clamp(0.96rem, 2.52vw, 1.56rem);
     margin-top: clamp(0.5rem, 1.6vw, 0.8rem);
   }
+  .party-names .pn { display: inline-block; white-space: nowrap; }
 
   .intro-btn {
     -webkit-appearance: none; appearance: none; border: 0;
@@ -635,11 +636,30 @@
     <div class="panel intro-panel" role="dialog" aria-modal="true" aria-label="평화분과 파티원" tabindex="-1">
       <div class="intro-content">
         <p class="party-head">2026 세종RCE ESD 국제청소년캠프<br>평화분과 🕊️피해자 없는 피스☮️</p>
-        <!-- Names run inline separated by "//". Each school-name pair is joined
-             with non-breaking spaces, and the "//" is bound to the entry before
-             it, so a pair never splits across lines and no line starts with "//". -->
+        <!-- Names run inline separated by "//". Each entry is its own nowrap
+             inline-block (same trick as .intro-text .word-wrapper) so a
+             school-name pair never splits across lines, and the "//" sits
+             inside the entry before it so no line can begin with "//". -->
         <p class="party-names">
-          양지중학교&nbsp;-&nbsp;김민주&nbsp;// 글벗중학교&nbsp;-&nbsp;김윤주&nbsp;// 반곡중학교&nbsp;-&nbsp;오하진&nbsp;// 어진중학교&nbsp;-&nbsp;홍다빈&nbsp;// 양지중학교&nbsp;-&nbsp;최재원&nbsp;// 고운중학교&nbsp;-&nbsp;최가은&nbsp;// 새롬중학교&nbsp;-&nbsp;김수민&nbsp;// 글벗중학교&nbsp;-&nbsp;최은서&nbsp;// 양지중학교&nbsp;-&nbsp;김지아&nbsp;// 보람중학교&nbsp;-&nbsp;차연우&nbsp;// 고운중학교&nbsp;-&nbsp;양조이&nbsp;// 한솔고등학교&nbsp;-&nbsp;홍지율&nbsp;// 아름고등학교&nbsp;-&nbsp;전보미&nbsp;// 세종국제고등학교&nbsp;-&nbsp;정선민&nbsp;// 노곡중학교&nbsp;-&nbsp;송선우&nbsp;// 노곡중학교&nbsp;-&nbsp;송지우&nbsp;// 서인천고등학교&nbsp;-&nbsp;김규인&nbsp;// 영신중학교&nbsp;-&nbsp;박지율&nbsp;// 지도교사&nbsp;해밀중학교&nbsp;성유경
+          <span class="pn">양지중학교 - 김민주 //</span>
+          <span class="pn">글벗중학교 - 김윤주 //</span>
+          <span class="pn">반곡중학교 - 오하진 //</span>
+          <span class="pn">어진중학교 - 홍다빈 //</span>
+          <span class="pn">양지중학교 - 최재원 //</span>
+          <span class="pn">고운중학교 - 최가은 //</span>
+          <span class="pn">새롬중학교 - 김수민 //</span>
+          <span class="pn">글벗중학교 - 최은서 //</span>
+          <span class="pn">양지중학교 - 김지아 //</span>
+          <span class="pn">보람중학교 - 차연우 //</span>
+          <span class="pn">고운중학교 - 양조이 //</span>
+          <span class="pn">한솔고등학교 - 홍지율 //</span>
+          <span class="pn">아름고등학교 - 전보미 //</span>
+          <span class="pn">세종국제고등학교 - 정선민 //</span>
+          <span class="pn">노곡중학교 - 송선우 //</span>
+          <span class="pn">노곡중학교 - 송지우 //</span>
+          <span class="pn">서인천고등학교 - 김규인 //</span>
+          <span class="pn">영신중학교 - 박지율 //</span>
+          <span class="pn">지도교사 해밀중학교 성유경</span>
         </p>
         <div class="intro-nav">
           <button class="intro-btn intro-next" id="partyClose" type="button">닫기</button>
